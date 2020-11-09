@@ -1,0 +1,169 @@
+/* GeneoTree Style wood
+by Damien Poulain - 2007*/
+
+BODY
+{	background-color: #f0d7aa;
+	font-family: Arial;
+	color:#000000;							/* couleur du texte noir par defaut */
+	font-size: small;           /* taille du texte petit par defaut */
+	background-image: url(wood.jpg);
+	background-repeat: repeat;										/* image et positionnement fond page */
+}
+A:LINK
+{	color:#7D2E26;						/* couleur texte des liens */
+	text-decoration:none;				/* pas de surligne sur les liens */
+}
+A:VISITED
+{	color:#996633;					/* couleur texte des liens visités */
+	text-decoration:none;				/* pas de surligne sur les liens visités */
+}
+A:HOVER
+{	background-color:#FFFFFF; 	/* couleur texte liens survolés */
+  text-decoration: underline;	/* ajoute un souligné au survol des liens */;
+}
+DIV
+{	border: 0px solid black;    /* pas de bordures par defaut. Conseil pour tout CSS. Il est preferable d ajouter les bordures apres */ 
+	padding:0px;                /* pas de padding par defaut Conseil pour tous les CSS. On ajoute les paddings dans les style personnalisés  bords, menu */
+	vertical-align: top;        /* par defaut, alignement vertical haut. Important.*/
+	display: inline;						/* Important les divs doivent pouvoir se positionner n importe ou */
+}
+TABLE
+{	border-collapse: collapse;  /* on fusionne les traits tableau et cellule : fondamental. Ne peux se faire qu avec des CSS */
+	border: 0px solid black;    /* pas de bordures par defaut */ 
+	margin:3px;                 /* 3 pixels de marges exterieures sur encadrement des tableaux */
+}
+TD
+{	border: 0px solid black;    /* pas de bordures par defaut. Conseil pour tout CSS. Il est preferable d ajouter les bordures apres */ 
+	padding:0px;                /* pas de padding par defaut Conseil pour tous les CSS. On ajoute les paddings dans les style personnalisés  bords, menu */
+	vertical-align: top;        /* par defaut, alignement vertical haut. Important.*/
+	font-size: small;           /* taille du texte petit par defaut */
+}
+P
+{	background-color:#f0e7aa;	/* couleur du fond */
+	padding:0px; 								/* supprime le padding de 3 par defaut */
+	margin:0px; 								/* supprime la marge de 3 par defaut */
+}
+.bords_verti
+{	border-left: 1px solid black;
+	border-right: 1px solid black;
+	padding:0 3px;				/* padding à gauche */
+}
+.bord_bas
+{	border-bottom: 1px solid black;
+}
+.bord_haut
+{	border-top: 1px solid black;
+}
+.bulle 
+{	position:absolute; 					/* position absolue */
+	visibility:hidden;					/* Important : invisible, attribut modifier ensuite en javascript */
+	background:#A0A0A0; 				/* couleur de fond de la bulle */
+	padding:4px; 								/* padding bulle */
+	text-align:left;						/* texte bulle aligne a gauche */
+	border:2px solid black; 		/* double trait pour la bulle */
+}
+.cell_indiv
+{	background-color:#f0e7aa;
+	border: 1px solid black;		/* trait simple */
+	border-radius: 10px;				/* bords arrondis */
+}
+.decale
+{	margin-left:-15px;					/* Important : espace entre les radios boutons */
+}
+.defilement
+{ animation: marqueelike 8s infinite linear;
+  display:inline-block;
+}
+@keyframes marqueelike
+{	0%, 100% {margin-left:0;}
+ 	50% {margin-left:25%;}
+}
+.filtre_inactif
+{	text-decoration:none;				/* pas surligne */
+	text-align:center;					/* centrage du texte */
+	font-weight:bold;						/* caractere gras */
+	background-color:#f0e7aa; /* couleur du fond */
+	padding:5px;								/* padding 5 */
+	border: 2px outset silver;	/* bordure double trait argent */
+}
+.filtre_actif
+{	text-decoration:underline;	/* on souligne le filtre actif */
+	text-align:center;
+	font-weight:bold;
+	background-color:#f0d7aa;
+	padding:5px;
+	border: 2px outset silver;
+}
+.invisible
+{	visibility: hidden;					/* invisible bien sur pour le boutono radio notamment */
+	border: 0px solid black;		/* pas de bordure */
+	vertical-align: center;			/* vertical centré */
+	z-index: 10;								/* premier plan au cas ou */
+	opacity: 1;									/* pas sur que ca serve */
+	background-color: #f0e7aa;
+}
+.justif
+{	text-align: justify;				/* ajustement du texte notamment pour les fiches */
+	text-justify: inter-word;		/* ajustement du texte en binome avec text-align */
+}
+.ligne_tr1
+{	background-color:#f0d7aa;
+	color:#000000;
+}
+.ligne_tr2
+{	background-color:#f0e7aa;
+	color:#000000;
+}
+.maxwidth
+{	max-width: 355px;
+}
+.menu_td
+{	text-align:center;
+	padding:2px;    						/* on ajoute du padding car par defaut, il est a zero */
+}
+.menu_td:link
+{	width:100px;
+	height:20px;
+	text-decoration:none;
+	color:#000000;
+	text-align:center;
+	font-weight:bold;
+	background-color:#f0e7aa;
+	padding:5px;
+	border: 2px outset silver;
+}
+.menu_td:visited
+{	width: 100px;
+	height: 20px;
+	text-decoration: none;
+	color:#000000;
+	text-align: center;
+	font-weight: bold;
+	background-color:#f0d7aa;
+	padding: 5px;
+	border: 2px outset silver;
+}
+.titre
+{	/*background-color:#f0e7aa;*/
+	font-size: 1.6em;
+	font-weight: bold;
+	text-align:center;
+	padding:0px; 
+	margin:0px; 
+}
+.trait_arbre_verti
+{	border-left: 4px solid black;
+	z-index: -1;
+}
+.trait_arbre_horiz
+{	border-top: 4px solid black;
+	z-index: -1;
+}
+.trait_simple             
+{	border: 1px solid black;
+	z-index: 1;
+}
+.trait_double
+{	border: 2px solid black;
+	z-index: 1;
+}
