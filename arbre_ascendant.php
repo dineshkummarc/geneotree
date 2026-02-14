@@ -1,200 +1,683 @@
 <?php
-require_once ("_recup_ascendance.inc.php");
-require_once ("_caracteres.inc.php");
-//require_once ("languages/lang.".$_REQUEST['lang'].".inc.php");	
+require_once ("_get_ascendancy.php");
+require_once ("_get_descendancy.php");
+require_once ("_functions.php");
 
-function recup_hh($ii)
-{	global $y;
-	return $y[$ii] * 3.5 + 60;
+function cell($ii)
+{   global $Indiv, $url;
+
+    if ($Indiv["id_indi"][$ii])
+    {  afficher_cellule ($ii, $Indiv["id_indi"][$ii], $Indiv["sosa_dyn"][$ii], $Indiv["nom"][$ii], $Indiv["sexe"][$ii], $Indiv["profession"][$ii], $Indiv["date_naiss"][$ii], $Indiv["lieu_naiss"][$ii], $Indiv["date_deces"][$ii], $Indiv["lieu_deces"][$ii], $Indiv["central"][$ii]);
+    } else 
+    {  echo '&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;';
+    }
 }
 
-function recup_ll($ii)
-{	global $x;
-	switch ($ii)
-	{	case ($ii >= 16) : $x[$ii] = 751; break;
-		case ($ii >= 8  and $ii < 16) : $x[$ii] = 510; break;
-		case ($ii >= 4  and $ii < 8) : $x[$ii] = 269; break;
-		case ($ii >= 2  and $ii < 4) : $x[$ii] = 28; break;
-		default :  $x[$ii] = 14;
-	}
-	return $x[$ii];
+function fleche($ii)
+{   global $Indiv;
+    global $url;
+
+    if (isset($Indiv["sosa_dyn"][$ii]) AND (isset($Indiv["sosa_dyn"][$ii*2]) OR isset($Indiv["sosa_dyn"][$ii*2+1])) )
+    {    echo '<a href="arbre_ascendant.php'.$url.'&id='.$Indiv["id_indi"][$ii].'&fid='.$_REQUEST["fid"].'&pag='.$_REQUEST["pag"].'"><img src=themes\fleche_droite.png></a>';
+    }
 }
 
-/*************************************** DEBUT DU SCRIPT *********************************************/
-//$titre_page = "GeneoTree v".$got_lang['Relea']." - ".$got_lang['ArAsc'];
-require_once ("menu.php");
+function fs($ii)
+{   global $Indiv;
+    global $ancetres_fs;
+    global $url;
+	global $page;
+// print_r2($ancetres_fs['nom']);
+// echo $Indiv["id_indi"][$ii];
+// return;
+// print_r ($ancetres_fs["nom"][1220]);return;
+// $FirstName = getFirstName($ancetres_fs["nom"][ $Indiv["id_indi"][$ii]]);
+// echo $ancetres_fs["nom"][ $Indiv["id_indi"][$ii]].'/'.$FirstName;return;
 
-$url = url_request();
+    $nb_fs = 0;
+    if (!empty($ancetres_fs["nom"][ $Indiv["id_indi"][$ii]])) 
+	{ $nb_fs = count($ancetres_fs["nom"][ $Indiv["id_indi"][$ii]]);
+    }
+    if ($nb_fs > 0)
+    {    for ($zz = 0; $zz < $nb_fs; $zz++)
+        {   if ($zz % 4 ==0 AND $zz != 0) {echo '<br>';} 
+            if ($ancetres_fs["nom"][ $Indiv["id_indi"][$ii] ][$zz])
+            {   echo '<a style="color:'.recup_color_sexe($ancetres_fs["sexe"][ $Indiv["id_indi"][$ii] ][$zz]).';" onclick="displayFiche('.$ancetres_fs["id_fs"][ $Indiv["id_indi"][$ii] ][$zz].')">'.getFirstName($ancetres_fs["nom"][$Indiv["id_indi"][$ii] ][$zz]).'</a>';
+                if ($zz != $nb_fs -1) {echo ', ';} // virgule, sauf pour le dernier individu
+            }
+        }
+    }
+}
+
+/************************************ DEBUT DU SCRIPT ***************************************/
+
+if (!isset($_REQUEST['type'])) {$_REQUEST['type'] = "";}
+
+if ($_REQUEST['type'] == "excel")
+{   $pool = sql_connect();
+
+    $ancetres[][] = '';$cpt_generations = 0;
+    $ancetres['id_indi'][0] = $_REQUEST['id'];
+    recup_ascendance ($ancetres,0,99999,'ME_G');
+    integrer_implexe(99999,'ME_G');
+
+    header('Content-type:application/vnd.ms-excel');
+    header('Content-Transfer-Encoding: binary');
+    header('Content-Disposition: attachment; filename="GeneoTree_Ascendancy_'.$_REQUEST['ibase'].'.csv"');
+    afficher_ascendance('Excel');
+    return;
+}
+
+// On ouvre le masque  g√©n√©ral
+include ("menu.php");
+
+if (!isset($_REQUEST['pag'])) {$_REQUEST['pag'] = "Age";} 
+
+// left arrow
+   // on r√©cup√®re l'identifiant du 1er descendant uniquement pour afficher la fl√®che vers la gauche
+$nb_generations_desc = 2;
+$descendants ['id_indi'][0] = $_REQUEST['id'];
+recup_descendance (0,0,0,'ME_G',NULL,NULL);
+$query = 'DROP TABLE IF EXISTS '.$sql_pref.'_'.$ADDRC.'_desc_cles';
+sql_exec($query);
+//afficher_descendance();return; //debogue
+
+$id_descendant = NULL;
+for ($ii=0; $ii < count($descendants ['id_indi']); $ii++)
+{  if ($descendants["generation"][$ii] == 1 AND $descendants ["sosa_d"][$ii] != 0)
+   {  $id_descendant = $descendants ['id_indi'][$ii];
+   }
+   if ($descendants["generation"][$ii] == 1 AND $id_descendant == NULL)
+   {  $id_descendant = $descendants ['id_indi'][$ii];
+   }
+}
+
+// get ascendancy
 $ancetres[][] = '';$communs[][] = '';$cpt_generations = 0;
 $ancetres['id_indi'][0] = $_REQUEST['id'];
-recup_ascendance ($ancetres,0,4,'ME_G');
-integrer_implexe(4,'ME_G');
-// afficher_ascendance();
-$cles = array_keys($ancetres);
-if (!isset($_REQUEST["orient"]))	{$_REQUEST["orient"] = "P";}
+recup_ascendance ($ancetres,0,5,'ME_G');
+integrer_implexe(5,'ME_G');
+// afficher_ascendance();return; // debogue
 
-echo '<table><tr><td width=925px>';   // 1ere colonne sur 3
-
-echo "<table><tr>";
-echo '<td><a href = arbre_ascendant_pdf.php'.$url.'&itype=arbre&continu&nbgen=8&implex&opti_reche&orient=L title="'.$got_lang['IBPdf'].'" target=_blank><img border=0 width=35 heigth=35 src=themes/icon-print.png></a></td>';
-echo '<td><a href = arbre_ascendant_pdf.php'.$url.'&itype=liste&continu&nbgen=8&implex&opti_reche title="'.$got_lang["IBPdL"].'" target=_blank><img border=0 width=35 heigth=35 src=themes/liste.png></a></td>';
-if ($flag_excel !== "No")
-{	echo "<td><a HREF = arbre_ascendant_pdf.php".$url."&itype=excel&continu&nbgen=25 title='".$got_lang['IBExc']."'><img border=0 width=35 heigth=35 src=themes/icon-excel.png></a></td>";
-}
-echo "<td class=titre width=100%>".$got_lang['ArAsc']." ".$ancetres['prenom1'][0]." ".$ancetres['nom'][0]."</td>";
-echo "</tr></table>";
-
-echo '<table><tr>';
-
-echo "<td><a href = fiche_pdf.php".$url."&ipag=AA title='".$got_lang['IBFic']."' target=_blank><img width=35 heigth=35 border=0 src=themes/icon-folder-grey.png></a></td>";
-if (geo_pertinente($ancetres['dept_naiss']))  // s'il y a de dept_naiss significatif dans l'arbre, on affiche le globe. 
-{	echo '<td><a href = affichage_carte.php'.$url.'&ipag=AA&carte= title="'.$got_lang["IBGeo"].'"><img width=35 heigth=35 border=0 src=themes/icon-maps-green.png></a></td>';
-	echo '<td><a href = affichage_carte.php'.$url.'&ipag=AA&carte=&ifin=ge title="'.$got_lang["IBGeo"].'"><img width=35 heigth=35 border=0 src=themes/icon-maps-kml.png></a></td>';
-} 
-echo '<td>'.str_repeat ("&nbsp;",10).'</td>';
-
-echo '<td class_menu_td>';
-if (!isset($_REQUEST['iprof'])) {$_REQUEST['iprof'] = "Age";} // par dÈfaut, affichage des professions. plus sympa je trouve
-
-echo '<form method=post><b>'.$got_lang['DeuLi'].' : </b> ';
-afficher_radio_bouton("iprof", array("Age", $got_tag['DEAT'], "Profession"), array("Age", "Deces", "Profession"), $_REQUEST['iprof'], "YES");
-echo '</form>';
-echo '</td>';
-echo "</tr></table>";
-
-		// on reprend les coordonnees absolues de l'arbre pdf ($x et $y dans _recup_ascendance)
-recup_pts_asc($_REQUEST['forma'],$_REQUEST["orient"]); 
-
-		// les fonctions recup_ll et recup_hh adapte les positions pdf aux positions html
-
-		// on calcule les traits entre les boites pour dessiner un arbre
-			// traits horizontaux sortants
-for ($ii = 2; $ii <= 15; $ii++)
-{	$coor_trait[0] = recup_ll($ii)*.95 + 215; // on ajoute la largeur de la cellule
-	$coor_trait[1] = recup_hh($ii) + 27;
-	$coor_trait[2] = 15;
-	afficher_trait_horizontal($coor_trait);
-}
-			// traits horizontaux entrants
-for ($ii = 2; $ii <= 31; $ii++)
-{	$coor_trait[0] = recup_ll($ii)*.95 ;
-	$coor_trait[1] = recup_hh($ii) + 27;
-	$coor_trait[2] = 15;
-	afficher_trait_horizontal($coor_trait);
-}
-			// traits verticaux
-for ($ii = 2; $ii <= 31; $ii = $ii + 2)
-//{	$coor_trait[0] = recup_ll($ii) + 8;
-{	$coor_trait[0] = recup_ll($ii)*.95;
-	$coor_trait[1] = recup_hh($ii) + 27;
-	if ($ii == 2)	{$coor_trait[2] = 199;}
-	if ($ii >= 4 and $ii <= 6)	{$coor_trait[2] = 237;}
-	if ($ii >= 8 and $ii <= 14)	{$coor_trait[2] = 120;}
-	if ($ii >= 16 and $ii <= 30){$coor_trait[2] = 60;}
-	afficher_trait_vertical($coor_trait);
-}
-$coor_trait[0] = recup_ll(3)*.95 ;
-$coor_trait[1] = recup_hh(3) - 190;
-$coor_trait[2] = 218;
-afficher_trait_vertical($coor_trait);
-
-$i = 0;
-while ($ancetres['id_indi'][$i] != NULL)
-{
-		// affichage des cellules
-	$coor_cellu[0] = recup_ll($ancetres['sosa_d'][$i])*.95 + 15;
-	$coor_cellu[1] = recup_hh($ancetres['sosa_d'][$i]);
-	$coor_cellu[2] = 200;
-	$coor_cellu[3] = 50;
-	$idbulle = 'A'.$ancetres['id_indi'][$i];
-
-					// affichage cellule principale
-	for ($ii = 0; $ii < count ($cles); $ii++)  {	$tab_indiv[$cles[$ii]] = $ancetres[$cles[$ii]][$i];	}
-	afficher_cellule ($tab_indiv, $idbulle, $coor_cellu[0], $coor_cellu[1], "H3");
-	$yk = $coor_cellu[1] + 50;
-
-					// affichage des  frËres et soeurs 
-	$sosa_f = 0;
-	$temp = "";
-
-	$sosa_d = $ancetres_fs ['sosa_d'][ $ancetres['id_indi'][$i] ][$sosa_f] - 1;
-	echo '<div style="position: absolute; left: '.$coor_cellu[0].'px; top: '.$yk.'px; width: '.$coor_cellu[2].'px;">'; // grande case
-	if ($sosa_d < 15)
-	{	while ($ancetres_fs ['id_indi'][ $ancetres['id_indi'][$i] ][$sosa_f] != '')
-		{	$temp = $temp.'<a href = arbre_ascendant.php'.$url.'&fid='.$ancetres_fs ['id_fs'][ $ancetres['id_indi'][$i] ][$sosa_f].' title="'.$got_lang['IBFih'].'"><color="'.recup_color_sexe($ancetres_fs ['sexe'][ $ancetres['id_indi'][$i] ][$sosa_f]).'">'.$ancetres_fs ['prenom1'][ $ancetres['id_indi'][$i] ][$sosa_f].',</a>';
-			if (fmod ($sosa_f+1, 4) == 0) {$temp = $temp.'<br>';}
-			$sosa_f = $sosa_f + 1;
-		}
-		if ($sosa_f > 0) 
-		{	$temp = ''.$sosa_f.' '.$got_lang['F&S'].': '.$temp;
-		} 
-		echo $temp;
-	}	
-
-					// rÈcupÈration du(es) conjoint(s) de l'individu central dans $conjoint 
-
-	if ($ancetres['sosa_d'][$i] == 1)
-	{	if ($ancetres ['sexe'][0] == 'M')
-		{	$query = "SELECT c.id_indi,c.prenom1, c.nom, c.sexe
-				FROM got_".$_REQUEST['ibase']."_individu a, got_".$_REQUEST['ibase']."_evenement b, got_".$_REQUEST['ibase']."_individu c 
-				where (a.id_indi = b.id_husb) and (b.id_wife = c.id_indi) 
-				and b.type_evene = 'MARR'
-				and a.id_indi=".$_REQUEST['id'];
-		}
-		else 
-		{	$query = "SELECT c.id_indi,c.prenom1, c.nom, c.sexe 
-				FROM got_".$_REQUEST['ibase']."_individu a, got_".$_REQUEST['ibase']."_evenement b, got_".$_REQUEST['ibase']."_individu c 
-				where (a.id_indi = b.id_wife) and (b.id_husb = c.id_indi) 
-				and b.type_evene = 'MARR'
-				and a.id_indi=".$_REQUEST['id'];
-		}
-		
-		$result = sql_exec($query,0);
-		while ($row = mysqli_fetch_row($result))
-		{	
-			echo '<br>&nbsp;&nbsp;&nbsp;x <a href = arbre_ascendant.php'.$url.'&id='.$row[0].' title="'.$got_lang['ArAsc'].'"><color="'.recup_color_sexe($row[3]).'"><b>'.$row[2].' '.$row[1].'</b></a>,';
-		}
-
-					// rÈcupÈration des enfants de l'individu central dans $enfants 
-		$query = "SELECT id_indi,prenom1,sexe,tri
-			FROM got_".$_REQUEST['ibase']."_individu
-			WHERE ";
-		if ($ancetres['sexe'][0] == 'M') {$query = $query.' id_pere = ';} else {$query = $query.' id_mere = ';}
-			$query = $query.$_REQUEST['id']."
-			ORDER BY tri";
-		$result = sql_exec($query);
-		$row = mysqli_fetch_row($result);
-		if ($row[0] != '')
-		{	echo '<br>&nbsp;&nbsp;&nbsp;Enf: ';
-		}
-		$sosa_e = 1;
-		while ($row[0] != '')
-		{	echo '<a href = arbre_ascendant.php'.$url.'&id='.$row[0].' title="'.$got_lang['ArAsc'].'"><color="'.recup_color_sexe($row[2]).'">'.$row[1].'</a>,';
-			if (fmod ($sosa_e, 4) == 0)
-			{	echo '<br>&nbsp;&nbsp;';
-			}
-			$row = mysqli_fetch_row($result);
-			$sosa_e = $sosa_e + 1;
-		}
-	}
-	echo '</div>';
-
-	$i++;
-}
-			// gestion des cases vides
-					// on ne sait pas ‡ l'avance o˘ sont les cases vides. Nul en perf mais pour 32 boucles, c'est pas grave
-for ($ii = 2; $ii < 32; $ii++)
-{	if (array_search ($ii,$ancetres['sosa_d']) == NULL)
-	{	$coor_cellu[1] = recup_hh($ii);
-		$coor_cellu[0] = recup_ll($ii)*.95 + 15;
-		$coor_cellu[2] = 200;
-		$coor_cellu[3] = 50;
-		echo '<div class="cell_indiv" style="position: absolute; left:'.$coor_cellu[0].'px; top:'.$coor_cellu[1].'px; width: '.$coor_cellu[2].'px; height: '.$coor_cellu[3].'px;">';
-		echo '</div>';
-	}
-}
-echo '</td><td width=1px></td>';  //2eme colonne vide
-echo'<td width=355px>';   //3eme colonne fiche
-require_once ("fiche.php");
-echo '</td></tr></table>'; // on ferme tout correctement
 ?>
+<script>
+flag_excel = "<?php echo $flag_excel?>";
+DivIcons ("DivIcon1", "themes/icon-print.png", "arbre_ascendant.php" + "?" + HrefBase + "&id=<?php echo $_REQUEST['id']?>&type=arbre&nbgen=4&orient=L&implex=Y&SpeGe=N");
+if (flag_excel !== "No")
+{   DivIcons ("DivIcon2", "themes/icon-excel.png", "arbre_ascendant.php" + "?" + HrefBase + "&id=<?php echo $_REQUEST["id"]?>&type=excel&nbgen=25");
+}
+DivIcons ("DivIcon3", "themes/icon-folder-grey.png", "fiche_pdf.php" + "?" + HrefBase + "&id=<?php echo $_REQUEST["id"]?>&pori=AA");
+dataJson = `[{"Code":"AGE", "Nb":0},{"Code":"DEAT", "Nb":0}]`;
+SubMenuJson(dataJson);
+Nom = "<?php echo $ancetres["nom"][0];?>";
+displayStatAscendancy(<?php echo $_REQUEST['id'];?>, Nom);
+</script>
+<?php
+
+// affichage de l'arbre ascendant
+
+for ($ii=0; $ii < 32; $ii++)
+{   $Indiv["id_indi"][$ii]    = "";
+    $Indiv["sosa_dyn"][$ii]   = "";
+    $Indiv["nom"][$ii]        = "";
+    $Indiv["sexe"][$ii]       = "";
+    $Indiv["profession"][$ii] = "";
+    $Indiv["date_naiss"][$ii] = "";
+    $Indiv["lieu_naiss"][$ii] = "";
+    $Indiv["date_deces"][$ii] = "";
+    $Indiv["lieu_deces"][$ii] = "";
+    $Indiv["central"][$ii]    = NULL;
+}
+
+for ($jj=0; $jj < count($ancetres["id_indi"]); $jj++)
+{   $Indiv["id_indi"][ $ancetres["sosa_d"][$jj] ] = $ancetres["id_indi"][$jj];
+    $Indiv["sosa_dyn"][ $ancetres["sosa_d"][$jj] ] = $ancetres["sosa_dyn"][$jj];
+    $Indiv["nom"][ $ancetres["sosa_d"][$jj] ] = $ancetres["nom"][$jj];
+    $Indiv["sexe"][ $ancetres["sosa_d"][$jj] ] = $ancetres["sexe"][$jj];
+    $Indiv["profession"][ $ancetres["sosa_d"][$jj] ] = $ancetres["profession"][$jj];
+    $Indiv["date_naiss"][ $ancetres["sosa_d"][$jj] ] = $ancetres["date_naiss"][$jj];
+    $Indiv["lieu_naiss"][ $ancetres["sosa_d"][$jj] ] = $ancetres["lieu_naiss"][$jj];
+    $Indiv["date_deces"][ $ancetres["sosa_d"][$jj] ] = $ancetres["date_deces"][$jj];
+    $Indiv["lieu_deces"][ $ancetres["sosa_d"][$jj] ] = $ancetres["lieu_deces"][$jj];
+    if ($ancetres["sosa_d"][$jj] == 1) { $Indiv["central"][ $ancetres["sosa_d"][$jj] ] = "O"; }
+}
+
+echo '
+<table style="border-collapse: separate; border-spacing:2px;">
+
+<tr>
+<td>&nbsp;</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][16]) 
+{ echo 'OnMouseOver=afficher_bulle("16") OnMouseOut=desafficher_bulle("16")';}
+echo '>';
+cell(16);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(16);
+echo '</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+<td></td>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="6"><img src=themes\branches_asc4.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][8]) 
+{ echo 'OnMouseOver=afficher_bulle("8") OnMouseOut=desafficher_bulle("8")';}
+echo '>';
+cell(8);
+echo '</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+<td></td>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][17]) 
+{ echo 'OnMouseOver=afficher_bulle("17") OnMouseOut=desafficher_bulle("17")';}
+echo '>';
+cell(17);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(17);
+echo '</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+<td></td>
+<td colspan="1" rowspan="10"><img src=themes\branches_asc.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][4]) 
+{ echo 'OnMouseOver=afficher_bulle("4") OnMouseOut=desafficher_bulle("4")';}
+echo '>';
+cell(4);
+echo '</td>
+<td style="vertical-align:top;">';
+fs(8);
+echo '</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][18]) 
+{ echo 'OnMouseOver=afficher_bulle("18") OnMouseOut=desafficher_bulle("18")';}
+echo '>';
+cell(18);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(18);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td style="vertical-align:top;">';
+fs(4);
+echo '</td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][9]) 
+{ echo 'OnMouseOver=afficher_bulle("9") OnMouseOut=desafficher_bulle("9")';}
+echo '>';
+cell(9);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][19]) 
+{ echo 'OnMouseOver=afficher_bulle("19") OnMouseOut=desafficher_bulle("19")';}
+echo '>';
+cell(19);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(19);
+echo '</td>
+</tr>
+
+<tr>
+<td colspan="1" rowspan="8" align=right><img src=themes\branches_asc01.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][2]) 
+{ echo 'OnMouseOver=afficher_bulle("2") OnMouseOut=desafficher_bulle("2")';}
+echo '>';
+cell(2);
+echo '</td>
+<td></td>
+<td></td>
+<td style="vertical-align:top;">';
+fs(9);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td><td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][20]) 
+{ echo 'OnMouseOver=afficher_bulle("20") OnMouseOut=desafficher_bulle("20")';}
+echo '>';
+cell(20);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(20);
+echo'</td>
+</tr>
+
+<tr>
+<td style="vertical-align:top;">';
+fs(2);
+echo '</td>
+<td></td><td colspan="1" rowspan="6"><img src=themes\branches_asc4.png></td>
+<td rowspan="2" class="cell_indiv" '; 
+if ($Indiv["id_indi"][10]) 
+{ echo 'OnMouseOver=afficher_bulle("10") OnMouseOut=desafficher_bulle("10")';}
+echo '>';
+cell(10);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][21]) 
+{ echo 'OnMouseOver=afficher_bulle("21") OnMouseOut=desafficher_bulle("21")';}
+echo '>';
+cell(21);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(21);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][5]) 
+{ echo 'OnMouseOver=afficher_bulle("5") OnMouseOut=desafficher_bulle("5")';}
+echo '>';
+cell(5);
+echo '</td>
+<td style="vertical-align:top;">';
+fs(10);
+echo '</td>
+</tr>
+
+<tr>
+<td class="trait"></td>
+<td></td>
+<td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][22]) 
+{ echo 'OnMouseOver=afficher_bulle("22") OnMouseOut=desafficher_bulle("22")';}
+echo '>';
+cell(22);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(22);
+echo '</td>
+</tr>
+
+<tr>
+<td class="trait" name="14A"></td>
+<td></td>
+<td style="vertical-align:top;">';
+fs(5);
+echo '</td>
+<td rowspan="2" class="cell_indiv" '; 
+if ($Indiv["id_indi"][11]) 
+{ echo 'OnMouseOver=afficher_bulle("11") OnMouseOut=desafficher_bulle("11")';}
+echo '>';
+cell(11);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][23]) 
+{ echo 'OnMouseOver=afficher_bulle("23") OnMouseOut=desafficher_bulle("23")';}
+echo '>';
+cell(23);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(23);
+echo'</td>
+</tr>
+
+<tr>
+<td colspan=1 rowspan=2>';
+if (isset($id_descendant))
+{ echo '<a href="arbre_ascendant.php'.$url.'&id='.$id_descendant.'&fid='.$_REQUEST["fid"].'&pag='.$_REQUEST["pag"].'"><img src=themes/fleche_gauche.png></a>'; }
+echo '</td>
+<td colspan=1 rowspan=2 class="cell_indivP"'; 
+if ($Indiv["id_indi"][1]) 
+{ echo 'OnMouseOver=afficher_bulle("1") OnMouseOut=desafficher_bulle("1")';}
+echo '>';
+cell(1);
+echo '</td>
+<td></td>
+<td></td>
+<td></td>
+<td style="vertical-align:top;">';
+fs(11);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][24]) 
+{ echo 'OnMouseOver=afficher_bulle("24") OnMouseOut=desafficher_bulle("24")';}
+echo '>';
+cell(24);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(24);
+echo '</td>
+</tr>
+
+<tr>
+<td colspan="1" rowspan="8" align=right><img src=themes\branches_asc02.png></td>
+<td style="vertical-align:top;">';
+fs(1);
+echo '</td>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="6"><img src=themes\branches_asc4.png></td>
+<td rowspan="2" class="cell_indiv" '; 
+if ($Indiv["id_indi"][12]) 
+{ echo 'OnMouseOver=afficher_bulle("12") OnMouseOut=desafficher_bulle("12")';}
+echo '>';
+cell(12);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][25]) 
+{ echo 'OnMouseOver=afficher_bulle("25") OnMouseOut=desafficher_bulle("25")';}
+echo '>';
+cell(25);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(25);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td colspan="1" rowspan="10"><img src=themes\branches_asc.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][6]) 
+{ echo 'OnMouseOver=afficher_bulle("6") OnMouseOut=desafficher_bulle("6")';}
+echo '>';
+cell(6);
+echo '</td>
+<td style="vertical-align:top;">';
+fs(12);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][26]) 
+{ echo 'OnMouseOver=afficher_bulle("26") OnMouseOut=desafficher_bulle("26")';}
+echo '>';
+cell(26);
+echo '</td><td colspan="1" rowspan="2">';
+fleche(26);
+echo'</td>
+</tr>
+
+<tr>
+<td></td>
+<td style="vertical-align:top;">';
+fs(6);
+echo '</td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][13]) 
+{ echo 'OnMouseOver=afficher_bulle("13") OnMouseOut=desafficher_bulle("13")';}
+echo '>';
+cell(13);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][27]) 
+{ echo 'OnMouseOver=afficher_bulle("27") OnMouseOut=desafficher_bulle("27")';}
+echo '>';
+cell(27);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(27);
+echo'</td>
+</tr>
+
+<tr>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][3]) 
+{ echo 'OnMouseOver=afficher_bulle("3") OnMouseOut=desafficher_bulle("3")';}
+echo '>';
+cell(3);
+echo '</td>
+<td></td>
+<td></td>
+<td style="vertical-align:top;">';
+fs(13);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][28]) 
+{ echo 'OnMouseOver=afficher_bulle("28") OnMouseOut=desafficher_bulle("28")';}
+echo '>';
+cell(28);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(28);
+echo'</td>
+</tr>
+
+<tr>
+<td></td>
+<td style="vertical-align:top;">';
+fs(3);
+echo '</td>
+<td></td>
+<td colspan="1" rowspan="6"><img src=themes\branches_asc4.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][14]) 
+{ echo 'OnMouseOver=afficher_bulle("14") OnMouseOut=desafficher_bulle("14")';}
+echo '>';
+cell(14);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][29]) 
+{ echo 'OnMouseOver=afficher_bulle("29") OnMouseOut=desafficher_bulle("29")';}
+echo '>';
+cell(29);
+echo '</td><td colspan="1" rowspan="2">';
+fleche(29);
+echo'</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][7]) 
+{ echo 'OnMouseOver=afficher_bulle("7") OnMouseOut=desafficher_bulle("7")';}
+echo '>';
+cell(7);
+echo '</td>
+<td style="vertical-align:top;">';
+fs(14);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td colspan="1" rowspan="4"><img src=themes\branches_asc3.png></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][30]) 
+{ echo 'OnMouseOver=afficher_bulle("30") OnMouseOut=desafficher_bulle("30")';}
+echo '>';
+cell(30);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(30);
+echo'</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td style="vertical-align:top;">';
+fs(7);
+echo '</td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][15]) 
+{ echo 'OnMouseOver=afficher_bulle("15") OnMouseOut=desafficher_bulle("15")';}
+echo '>';
+cell(15);
+echo '</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td rowspan="2" class="cell_indiv"'; 
+if ($Indiv["id_indi"][31]) 
+{ echo 'OnMouseOver=afficher_bulle("31") OnMouseOut=desafficher_bulle("31")';}
+echo '>';
+cell(31);
+echo '</td>
+<td colspan="1" rowspan="2">';
+fleche(31);
+echo'</td>
+</tr>
+
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td style="vertical-align:top;">';
+fs(15);
+echo '</td>
+</tr></table>
+';
+
+
+// on ferme le masque g√©n√©ral
+include ("_inc_html_card.php");
+
+
+// formulaire choix edition
+if (in_array($_REQUEST["type"], array("arbre","liste")))
+{   
+    echo '
+    <FORM method="POST">
+    <div style="position:absolute; left:300px; top:300px; margin-left:auto; margin-right:auto; padding:30px; background-color:#DDDDDD; border: 3px solid black;" >';
+  // titre
+    echo '
+    <p class=titre align=center><b>'.$got_lang['IBPdf'].'</b></p>
+    <p>&nbsp;';
+  // type
+    echo '
+    <p align=center>';
+    afficher_menu("type",array($got_lang['Arbre'],$got_lang['List']),array("arbre","liste")).'</p>';
+    echo '
+    <p>&nbsp;';
+
+  //orientation
+    if ($_REQUEST["type"] == "arbre")
+    {    echo '
+        <p>&nbsp;</p><p align=center><b>Orientation : </b>';
+        afficher_menu("orient",array($got_lang['Paysa'],$got_lang['Porta']),array("L","P")).'</p>';
+    }
+  // nb g√©n√©rations
+    echo '
+    <br><br><b>'.$got_lang['NbGen'].': </b>';
+    afficher_menu("nbgen",array(5,9,13,$got_lang['Tous']),array(4,8,12,40));
+  // implexe
+    echo '
+    <p>&nbsp;';
+    echo '
+    <p>&nbsp;</p><p align=center>'.$got_lang["Implx"].' : ';
+    afficher_menu("implex",array($got_lang["Non"], $got_lang["Oui"]),array("N","Y"));
+  // cases gris√©es
+    if ($_REQUEST["type"] == "arbre" and $_REQUEST["orient"] == "P") 
+    {    echo '
+        <p>&nbsp;</p><p align=center>'.$got_lang["SpeGe"].' : ';
+        afficher_menu("SpeGe",array($got_lang["Non"], $got_lang["Oui"]),array("N","Y"));
+    }
+
+    echo '
+    <p>&nbsp;
+    <table width=100% style="border-spacing:20px; border-collapse: separate;">
+    <tr>
+    <td class=menu_td><a href=arbre_ascendant.php'.$url.' style="display:block;width:100%;height:100%;text-decoration:none;color:black;">Annul</td>
+    <td class=menu_td align=center><a target=_blank href=arbre_ascendant_pdf.php'.$url.'&type='.$_REQUEST["type"].'&orient='.$_REQUEST["orient"].'&nbgen='.$_REQUEST["nbgen"].'&implex='.$_REQUEST["implex"].'&SpeGe='.$_REQUEST["SpeGe"].'&id='.$_REQUEST["id"].' style="display:block;width:100%;height:100%;text-decoration:none;color:black;">OK</td>
+    </tr>
+    </table>
+    
+    </div>
+    </FORM>';
+
+    return;
+}

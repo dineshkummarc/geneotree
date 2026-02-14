@@ -1,0 +1,1507 @@
+0 HEAD
+1 SOUR PAF 2.2
+1 DEST PAF
+1 DATE 20 NOV 1992
+1 FILE ROYALS.GED
+1 CHAR ANSEL
+0 @S1@ SUBM
+1 NAME Denis R. Reid
+1 ADDR 149 Kimrose Lane
+2 CONT Broadview Heights, Ohio 44147-1258
+2 CONT Internet Email address:  ah189@cleveland.freenet.edu
+1 PHON (216) 237-5364
+1 COMM >> In a message to Cliff Manis (cmanis@csoftec.csf.com)
+2 CONT >> Denis Reid wrote the following:
+2 CONT >> Date: Fri, 25 Dec 92 14:12:32 -0500
+2 CONT >> From: ah189@cleveland.Freenet.Edu (Denis Reid)
+2 CONT >> Subject: THE ROYALS
+2 CONT >> First of all,  MERRY CHRISTMAS!
+2 CONT >>
+2 CONT >> You may make this Royal GEDCOM available available to whomever.
+2 CONT >> As you know this is a work in process and have received suggestions,
+2 CONT >> corrections and additions from all over the planet...
+2 CONT >> some even who claim to be descended from Charlemange, himself!
+2 CONT >>
+2 CONT >> The weakest part of the Royals is in the French and Spanish lines.
+2 CONT >> I found that many of the French Kings had multiple mistresses whose
+2 CONT >> descendants claimed noble titles, and the Throne itself in some
+2 CONT >> cases.  I have had the hardest time finding good published sources
+2 CONT >> for French and Spanish Royalty.
+2 CONT >>
+2 CONT >> If you do post it to a BBS or send it around, I would appreciate
+2 CONT >> it if you'd append a message to the effect that I would welcome
+2 CONT >> comments and suggestions and possible sources to improve
+2 CONT >> the database.
+2 CONT >>
+2 CONT >> Since the Royals had so many names and many titles it was difficult
+2 CONT >> to "fill in the blanks" with their name.  In the previous version,
+2 CONT >> I included all their titles, names, monikers in the notes.
+2 CONT >>
+2 CONT >> Thanks for your interest.   Denis Reid
+0 @I3@ INDI
+1 NAME Victoria Adelaide Mary//
+1 TITL Princess Royal
+1 SEX F
+1 BIRT
+2 DATE 21 NOV 1840
+1 CHR
+2 DATE 10 FEB 1841
+1 DEAT
+2 DATE  5 AUG 1901
+1 BURI
+1 FAMS @F3@
+1 FAMC @F1@
+0 @I4@ INDI
+1 NAME Edward_VII  /Wettin/
+1 TITL King of England
+1 SEX M
+1 BIRT
+2 DATE  9 NOV 1841
+2 PLAC London,England,Buckingham Palace
+1 DEAT
+2 DATE  6 MAY 1910
+2 PLAC London,England,Buckingham Palace
+1 BURI
+2 DATE 20 MAY 1910
+2 PLAC Windsor,Berkshire,England
+1 OBJE
+2 FORM jpg
+2 FILE King-Edward-VII_(cropped)_(b).jpg
+1 FAMS @F2@
+1 FAMC @F1@
+0 @I5@ INDI
+1 NAME Alice Maud Mary//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 25 APR 1843
+2 PLAC London,England,Buckingham Palace
+1 DEAT
+2 DATE 14 DEC 1878
+1 OBJE
+2 FORM jpg
+2 FILE Alice,_Princess_Louis_of_Hesse.jpg
+1 FAMS @F8@
+1 FAMC @F1@
+0 @I6@ INDI
+1 NAME Alfred Ernest Albert//
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE  6 AUG 1844
+1 DEAT
+2 DATE 30 JUL 1900
+1 FAMS @F26@
+1 FAMC @F1@
+0 @I7@ INDI
+1 NAME Helena Augusta Victoria//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 25 MAY 1846
+2 PLAC London,England,Buckingham Palace
+1 DEAT
+2 DATE  9 JUN 1923
+1 FAMS @F32@
+1 FAMC @F1@
+0 @I8@ INDI
+1 NAME Louise Caroline Alberta//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 18 MAR 1848
+2 PLAC London,England,Buckingham Palace
+1 DEAT
+2 DATE  3 DEC 1939
+1 BURI
+1 FAMS @F69@
+1 FAMC @F1@
+0 @I9@ INDI
+1 NAME Arthur William Patrick//
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE  1 MAY 1850
+2 PLAC London,England,Buckingham Palace
+1 DEAT
+2 DATE 16 JAN 1942
+1 FAMS @F34@
+1 FAMC @F1@
+0 @I10@ INDI
+1 NAME Leopold George Duncan//
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE  7 APR 1853
+2 PLAC London,England,Buckingham Palace
+1 DEAT
+2 DATE 28 MAR 1884
+1 FAMS @F5@
+1 FAMC @F1@
+0 @I11@ INDI
+1 NAME Beatrice Mary Victoria//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 14 APR 1857
+2 PLAC London,England,Buckingham Palace
+1 DEAT
+2 DATE 26 OCT 1944
+1 FAMS @F6@
+1 FAMC @F1@
+0 @I12@ INDI
+1 NAME Alexandra of_Denmark "Alix"//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE  1 DEC 1844
+2 PLAC Copenhagen,Denmark
+1 DEAT
+2 DATE 20 NOV 1925
+2 PLAC Sandringham,Norfolk,England
+1 BURI
+1 OBJE
+2 FORM jpg
+2 FILE Queen_Alexandra_the_Princess_of_Wales.jpg
+1 FAMS @F2@
+1 FAMC @F74@
+0 @I13@ INDI
+1 NAME Albert Victor Christian//
+1 TITL Duke
+1 SEX M
+1 BIRT
+2 DATE  8 JAN 1864
+1 DEAT
+2 DATE 14 JAN 1892
+1 BURI
+2 DATE 20 JAN 1892
+2 PLAC Windsor,Berkshire,England
+1 FAMC @F2@
+0 @I14@ INDI
+1 NAME George_V  /Windsor/
+1 TITL King of England
+1 SEX M
+1 BIRT
+2 DATE  3 JUN 1865
+2 PLAC London,England,Marlborough House
+1 CHR
+2 DATE  7 JUL 1865
+1 DEAT
+2 DATE 20 JAN 1936
+2 PLAC Sandringham,Norfolk,England
+1 BURI
+2 DATE 28 JAN 1936
+2 PLAC Windsor,Berkshire,England, Windsor Castle St. George Chap.
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\george.5.windsor.jpg
+1 FAMS @F7@
+1 FAMC @F2@
+0 @I15@ INDI
+1 NAME Louise Victoria Alexandra//
+1 TITL Princess Royal
+1 SEX F
+1 BIRT
+2 DATE 20 FEB 1867
+1 DEAT
+2 DATE  4 JAN 1931
+1 FAMS @F29@
+1 FAMC @F2@
+0 @I16@ INDI
+1 NAME Victoria Alexandra Olga//
+1 SEX F
+1 BIRT
+2 DATE  6 JUL 1868
+1 DEAT
+2 DATE  3 DEC 1935
+1 FAMC @F2@
+0 @I17@ INDI
+1 NAME Maude Charlotte Mary//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 26 NOV 1869
+2 PLAC London,England,Marlborough House
+1 DEAT
+2 DATE 20 NOV 1938
+2 PLAC London,England
+1 FAMS @F21@
+1 FAMC @F2@
+0 @I18@ INDI
+1 NAME John Alexander //
+1 SEX M
+1 BIRT
+2 DATE  6 APR 1871
+1 DEAT
+2 DATE  7 APR 1871
+1 FAMC @F2@
+0 @I22@ INDI
+1 NAME Louis_IV of_Hesse //
+1 TITL Grand Duke
+1 SEX M
+1 BIRT
+2 DATE 12 SEP 1837
+2 PLAC Darmstadt, Germany
+1 DEAT
+2 DATE 13 MAR 1892
+1 OBJE
+2 FORM jpg
+2 FILE Prince_Louis_of_Hesse,_later_Grand_Duke_Louis_IV_of_Hesse_(1837-1892).jpg
+1 FAMS @F8@
+1 FAMC @F114@
+0 @I25@ INDI
+1 NAME Henry Maurice of_Battenberg//
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE        1858
+1 DEAT
+2 DATE        1896
+1 FAMS @F6@
+1 FAMC @F109@
+0 @I30@ INDI
+1 NAME Mary_of_Teck (May) //
+1 TITL Queen
+1 SEX F
+1 BIRT
+2 DATE 26 MAY 1867
+2 PLAC London,England,Kensington Palace
+1 DEAT
+2 DATE 24 MAR 1953
+2 PLAC London,England,Marlborough House
+1 BURI
+2 DATE 31 MAR 1953
+2 PLAC Windsor,Berkshire,England, Windsor Castle St. George Chap.
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\220px-Queenmaryformalportrait_edit3.jpg
+2 NOTE File source: http://commons.wikimedia.org/wiki/File:Queenma
+1 FAMS @F7@
+1 FAMC @F41@
+0 @I31@ INDI
+1 NAME Edward_VIII  /Windsor/
+1 TITL Duke of Windsor
+1 SEX M
+1 BIRT
+2 DATE 23 JUN 1894
+1 DEAT
+2 DATE 28 MAY 1972
+1 BURI
+1 FAMS @F20@
+1 FAMC @F7@
+0 @I32@ INDI
+1 NAME George_VI  /Windsor/
+1 TITL King of England
+1 SEX M
+1 BIRT
+2 DATE 14 DEC 1895
+2 PLAC Sandringham,Norfolk,England
+1 DEAT
+2 DATE  6 FEB 1952
+2 PLAC Sandringham,Norfolk,England
+1 BURI
+2 DATE 11 MAR 1952
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\King_George_VI_of_England,_formal_photo_portrait,_circa_1940-1946.jpg
+1 FAMS @F12@
+1 FAMC @F7@
+0 @I33@ INDI
+1 NAME Mary  /Windsor/
+1 TITL Princess Royal
+1 SEX F
+1 BIRT
+2 DATE 25 APR 1897
+1 DEAT
+2 DATE 28 MAR 1965
+1 FAMS @F18@
+1 FAMC @F7@
+0 @I34@ INDI
+1 NAME Henry William Frederick/Windsor/
+1 TITL Duke
+1 SEX M
+1 BIRT
+2 DATE 31 MAR 1900
+1 DEAT
+2 DATE        1974
+1 FAMS @F19@
+1 FAMC @F7@
+0 @I35@ INDI
+1 NAME George Edward Alexander/Windsor/
+1 TITL Duke of Kent
+1 SEX M
+1 BIRT
+2 DATE 20 DEC 1902
+1 DEAT
+2 DATE 25 AUG 1942
+1 FAMS @F17@
+1 FAMC @F7@
+0 @I36@ INDI
+1 NAME John Charles Francis/Windsor/
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE 12 JUL 1905
+1 DEAT
+2 DATE 18 JAN 1919
+1 BURI
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\Prince_Francis,_Duke_of_Teck.jpg
+1 FAMC @F7@
+0 @I38@ INDI
+1 NAME Victoria Alberta of_Hesse//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 5 APR 1863
+2 PLAC Windsor,Berkshire,England, Windsor Castle St. George Chap.
+1 DEAT
+2 DATE 24 SEP 1950
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\victoria.0.von_hessen_und_bei_rhein.jpg
+1 FAMS @F27@
+1 FAMC @F8@
+0 @I39@ INDI
+1 NAME Alexandra Fedorovna "Alix"//
+1 TITL Tsarina
+1 SEX F
+1 BIRT
+2 DATE  6 JUN 1872
+1 DEAT
+2 DATE 16 JUL 1918
+1 FAMS @F4@
+1 FAMC @F8@
+0 @I41@ INDI
+1 NAME Dagmar "Marie" of_Denmark//
+1 TITL Tsarina
+1 SEX F
+1 BIRT
+2 DATE        1847
+1 DEAT
+2 DATE    OCT 1928
+2 PLAC Copenhagen,Denmark
+1 FAMS @F9@
+1 FAMC @F74@
+0 @I44@ INDI
+1 NAME Alexander_II Nicholoevich /Romanov/
+1 TITL Tsar of Russia
+1 SEX M
+1 BIRT
+2 DATE        1818
+1 DEAT
+2 DATE 13 MAR 1881
+1 FAMS @F11@
+1 FAMS @F593@
+1 FAMC @F10@
+0 @I45@ INDI
+1 NAME Marie of_Hesse- Darmstadt//
+1 SEX F
+1 BIRT
+2 DATE        1824
+1 DEAT
+2 DATE        1880
+1 FAMS @F11@
+1 FAMC @F110@
+0 @I51@ INDI
+1 NAME Elizabeth Angela Marguerite/Bowes-Lyon/
+1 TITL Lady
+1 SEX F
+1 BIRT
+2 DATE  4 AUG 1900
+2 PLAC London,England
+1 CHR
+2 DATE 23 SEP 1900
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\1200px-Queen_Elizabeth_the_Queen_Mother_portrait.jpg
+1 FAMS @F12@
+1 FAMC @F46@
+0 @I52@ INDI
+1 NAME Elizabeth_II Alexandra Mary/Windsor/
+1 TITL Queen of England
+1 SEX F
+1 BIRT
+2 DATE 21 APR 1926
+2 PLAC London,England,17 Bruton St.
+1 DEAT
+2 DATE 8 SEP 2022
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\Elizabeth_II.jpg
+1 FAMS @F14@
+1 FAMC @F12@
+0 @I53@ INDI
+1 NAME Margaret Rose /Windsor/
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 21 AUG 1930
+1 FAMS @F13@
+1 FAMC @F12@
+0 @I57@ INDI
+1 NAME Philip  /Mountbatten/
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE 10 JUN 1921
+2 PLAC Isle of Kerkira,Corfu,Greece,Mon Repos
+1 DEAT
+2 DATE 9 APR 2021
+2 PLAC Windsor,Berkshire,England
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\417px-HRH_The_Duke_of_Edinburgh_Allan_Warren.jpg
+1 FAMS @F14@
+1 FAMC @F28@
+0 @I58@ INDI
+1 NAME Charles Philip Arthur/Windsor/
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE 14 NOV 1948
+2 PLAC London,England,Buckingham Palace
+1 CHR
+2 DATE 15 DEC 1948
+2 PLAC London,England,Buckingham Palace Music Room
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\483px-Carlos_de_Gales_(2011).jpg
+1 FAMS @F16@
+1 FAMC @F14@
+0 @I59@ INDI
+1 NAME Anne Elizabeth Alice/Windsor/
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 15 AUG 1950
+1 CHR
+2 DATE 21 OCT 1950
+1 FAMS @F15@
+1 FAMC @F14@
+0 @I60@ INDI
+1 NAME Andrew Albert Christian/Windsor/
+1 TITL Duke of York
+1 SEX M
+1 BIRT
+2 DATE 19 FEB 1960
+1 FAMS @F53@
+1 FAMC @F14@
+0 @I61@ INDI
+1 NAME Edward Anthony Richard/Windsor/
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE 10 MAR 1964
+2 PLAC London,England,Buckingham Palace
+1 CHR
+2 DATE  2 MAY 1964
+1 FAMC @F14@
+0 @I65@ INDI
+1 NAME Diana Frances /Spencer/
+1 TITL Lady
+1 SEX F
+1 BIRT
+2 DATE  1 JUL 1961
+2 PLAC Sandringham,Norfolk,England
+1 CHR
+1 DEAT
+2 DATE 31 AUG 1997
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\336px-Princess_diana_bristol_1987_01.jpg
+1 FAMS @F16@
+1 FAMC @F78@
+0 @I79@ INDI
+1 NAME Irene of_Hesse //
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE        1866
+1 DEAT
+2 DATE        1953
+1 FAMS @F22@
+1 FAMC @F8@
+0 @I83@ INDI
+1 NAME Ernest Louis of_Hesse//
+1 TITL Grand Duke
+1 SEX M
+1 BIRT
+2 DATE        1868
+1 DEAT
+2 DATE        1937
+1 FAMS @F49@
+1 FAMS @F157@
+1 FAMC @F8@
+0 @I84@ INDI
+1 NAME Elizabeth "Ella" //
+1 TITL Grand Duchess
+1 SEX F
+1 BIRT
+2 DATE        1864
+1 DEAT
+2 DATE 17 JUL 1918
+1 FAMS @F144@
+1 FAMC @F8@
+0 @I85@ INDI
+1 NAME Mary "May" //
+1 SEX F
+1 BIRT
+2 DATE        1874
+1 DEAT
+2 DATE        1878
+1 FAMC @F8@
+0 @I86@ INDI
+1 NAME Frederick  //
+1 SEX M
+1 BIRT
+2 DATE        1870
+1 DEAT
+2 DATE        1873
+1 FAMC @F8@
+0 @I100@ INDI
+1 NAME Louis of_Battenberg //
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE  24 MAY 1854
+2 PLAC Graz, Austria
+1 DEAT
+2 DATE        1921
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\Ludwig_Alexander_von_Battenberg.jpg
+1 FAMS @F27@
+1 FAMC @F109@
+0 @I101@ INDI
+1 NAME Alice of_Battenberg //
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 25 FEB 1885
+2 PLAC Windsor,Berkshire,England, Windsor Castle St. George Chap.
+1 DEAT
+2 DATE 5 DEC 1969
+2 PLAC London,England,Buckingham Palace
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\alice.0.mountbatten.jpg
+1 FAMS @F28@
+1 FAMC @F27@
+0 @I102@ INDI
+1 NAME George  /Mountbatten/
+1 TITL Marquess
+1 SEX M
+1 BIRT
+2 DATE        1892
+1 DEAT
+2 DATE        1938
+1 FAMS @F176@
+1 FAMC @F27@
+0 @I103@ INDI
+1 NAME Louis of_Burma /Mountbatten/
+1 TITL Earl Mountbatten
+1 SEX M
+1 BIRT
+2 DATE        1900
+1 DEAT
+2 DATE 27 AUG 1979
+1 FAMS @F175@
+1 FAMC @F27@
+0 @I104@ INDI
+1 NAME Andrew of_Greece //
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE 2 FEB 1882
+2 PLAC Athens, Greece, Tatoi Palace
+1 DEAT
+2 DATE 3 DEC 1944
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\andrew.0.von_schleswig_holstein_sonderburg_glucksburg.jpg
+1 FAMS @F28@
+1 FAMC @F75@
+0 @I115@ INDI
+1 NAME William Arthur Philip/Windsor/
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE 21 JUN 1982
+2 PLAC London,England,St. Mary's Hosp. Paddington
+3 FILE Birth Certificate Prince William.jpg
+1 CHR
+2 DATE  4 AUG 1982
+2 PLAC London,England,Buckingham Palace Music Room
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\Prince_William_2011.jpg
+1 FAMC @F16@
+0 @I116@ INDI
+1 NAME Henry Charles Albert/Windsor/
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE 15 SEP 1984
+2 PLAC London,England,St. Mary's Hosp. Paddington
+1 FAMC @F16@
+0 @I135@ INDI
+1 NAME Augusta Caroline //
+1 SEX F
+1 BIRT
+2 DATE        1822
+1 DEAT
+2 DATE        1916
+1 FAMS @F89@
+1 FAMC @F40@
+0 @I136@ INDI
+1 NAME Mary Adelaide /of_Cambridge/
+1 SEX F
+1 BIRT
+2 DATE 27 NOV 1833
+2 PLAC Hanover, Germany
+1 DEAT
+2 DATE 27 OCT 1897
+1 OBJE
+2 FORM jpg
+2 FILE Princess_Mary_Adelaide,_Duchess_of_Teck_(1833-1897).jpg
+1 FAMS @F41@
+1 FAMC @F40@
+0 @I137@ INDI
+1 NAME Francis  //
+1 TITL Duke of Teck
+1 SEX M
+1 BIRT
+2 DATE 28 AUG 1837
+2 PLAC Osijek, Croatia, formerly Esseg Slavonia
+1 DEAT
+2 DATE 21 JAN 1900
+1 OBJE
+2 FORM jpg
+2 FILE Prince_Francis,_Duke_of_Teck.jpg
+1 FAMS @F41@
+1 FAMC @F98@
+0 @I145@ INDI
+1 NAME Claude George /Bowes-Lyon/
+1 TITL Earl of Strath.
+1 SEX M
+1 BIRT
+2 DATE 14 MAR 1855
+2 PLAC London, England
+1 DEAT
+2 DATE 7 NOV 1944
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\Claude_BOWES-LYON.jpg
+2 NOTE Claude Bowes-Lyon, 14th Earl of Strathmore
+1 FAMS @F46@
+1 FAMC @F56@
+0 @I146@ INDI
+1 NAME Cecilia Nina /Cavendish-Bentin/
+1 TITL Countess of S.
+1 SEX F
+1 BIRT
+2 DATE 11 SEP 1862
+2 PLAC London, England
+1 DEAT
+2 DATE 23 JUN 1938
+1 OBJE
+2 FORM jpg
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\Nina_Cecilia_Cavendish-Bentinck.jpg
+1 FAMS @F46@
+1 FAMC @F71@
+0 @I147@ INDI
+1 NAME Margarita  /Mountbatten/
+1 SEX F
+1 BIRT
+2 DATE        1905
+1 DEAT
+2 DATE        1981
+1 FAMS @F166@
+1 FAMC @F28@
+0 @I148@ INDI
+1 NAME Theodora  /Mountbatten/
+1 SEX F
+1 BIRT
+2 DATE        1906
+1 DEAT
+2 DATE        1960
+1 FAMS @F167@
+1 FAMC @F28@
+0 @I163@ INDI
+1 NAME Alexandra of_Greece //
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE        1870
+1 DEAT
+2 DATE        1891
+1 FAMS @F50@
+1 FAMC @F75@
+0 @I165@ INDI
+1 NAME Nicholas  /Romanov/
+1 SEX M
+1 BIRT
+2 DATE        1850
+1 DEAT
+2 DATE        1918
+1 FAMS @F1267@
+1 FAMC @F112@
+0 @I173@ INDI
+1 NAME Violet Hyacinth /Bowes-Lyon/
+1 SEX F
+1 BIRT
+2 DATE        1882
+1 DEAT
+2 DATE        1893
+1 FAMC @F46@
+0 @I174@ INDI
+1 NAME Mary Frances /Bowes-Lyon/
+1 SEX F
+1 BIRT
+2 DATE        1883
+1 DEAT
+2 DATE        1961
+1 FAMS @F60@
+1 FAMC @F46@
+0 @I175@ INDI
+1 NAME Patrick  /Bowes-Lyon/
+1 SEX M
+1 BIRT
+2 DATE        1884
+1 DEAT
+2 DATE        1949
+1 FAMS @F61@
+1 FAMC @F46@
+0 @I176@ INDI
+1 NAME John Herbert /Bowes-Lyon/
+1 SEX M
+1 BIRT
+2 DATE        1886
+1 DEAT
+2 DATE        1930
+1 FAMS @F62@
+1 FAMC @F46@
+0 @I178@ INDI
+1 NAME Fergus  /Bowes-Lyon/
+1 SEX M
+1 BIRT
+2 DATE        1889
+1 DEAT
+2 DATE        1915
+1 FAMS @F63@
+1 FAMC @F46@
+0 @I179@ INDI
+1 NAME Rose  /Bowes-Lyon/
+1 SEX F
+1 BIRT
+2 DATE        1890
+1 DEAT
+2 DATE        1967
+1 FAMS @F64@
+1 FAMC @F46@
+0 @I180@ INDI
+1 NAME Michael Claude /Bowes-Lyon/
+1 SEX M
+1 BIRT
+2 DATE        1893
+1 DEAT
+2 DATE        1953
+1 FAMS @F65@
+1 FAMC @F46@
+0 @I182@ INDI
+1 NAME Claude /Bowes-Lyon/
+1 TITL Earl
+1 SEX M
+1 BIRT
+2 DATE 21 JUL 1824
+2 PLAC Redbourn, Hertfordshire, England
+1 DEAT
+2 DATE 16 FEB 1904
+1 OBJE
+2 FORM jpg
+2 FILE Claud_Bowes-Lyon,_13th.jpg
+1 FAMS @F56@
+1 FAMC @F57@
+0 @I183@ INDI
+1 NAME Frances Dora /Smith/
+1 SEX F
+1 BIRT
+2 DATE 29 JUL 1833
+2 PLAC London, England
+1 DEAT
+2 DATE 5 FEB 1922
+1 OBJE
+2 FORM jpg
+2 FILE 220px-Frances_Bowes-Lyon.jpg
+1 FAMS @F56@
+1 FAMC @F117@
+0 @I186@ INDI
+1 NAME Thomas George /Lyon-Bowes/
+1 SEX M
+1 BIRT
+2 DATE        1822
+1 DEAT
+2 DATE        1865
+1 FAMC @F57@
+0 @I207@ INDI
+1 NAME Charles  /Cavendish-Bentin/
+1 TITL Reverend
+1 SEX M
+1 BIRT
+2 DATE 8 NOV 1817
+2 PLAC London,England,Kensington Palace
+1 DEAT
+2 DATE 17 AUG 1865
+1 OBJE
+2 FORM jpg
+2 FILE Charles Cavendish-Bentinck.jpg
+1 FAMS @F71@
+1 FAMC @F115@
+0 @I208@ INDI
+1 NAME Caroline Louisa /Burnaby/
+1 SEX F
+1 BIRT
+2 DATE 5 DEC 1832
+2 PLAC Leicester, England
+1 DEAT
+2 DATE 6 JUL 1918
+1 OBJE
+2 FORM jpg
+2 FILE Luisa_Burnaby.jpg
+1 FAMS @F71@
+1 FAMC @F116@
+0 @I224@ INDI
+1 NAME Marie  //
+1 SEX F
+1 BIRT
+2 DATE        1852
+1 DEAT
+2 DATE        1923
+1 FAMS @F171@
+1 FAMC @F109@
+0 @I225@ INDI
+1 NAME Christian_IX  //
+1 TITL King of Denmark
+1 SEX M
+1 BIRT
+2 DATE  8 APR 1818
+2 PLAC Schleswig, Germany, Gottorp
+1 DEAT
+2 DATE 29 JAN 1906
+2 PLAC Copenhagen,Denmark
+1 OBJE
+2 FORM jpg
+2 FILE Christian_IX_of_Denmark.jpg
+1 FAMS @F74@
+1 FAMC @F108@
+0 @I226@ INDI
+1 NAME Louise of_Hesse-Cassel //
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE  7 SEP 1817
+2 PLAC Kassel, Germany
+1 DEAT
+2 DATE 29 SEP 1898
+2 PLAC Copenhagen,Denmark
+1 OBJE
+2 FORM jpg
+2 FILE Luisa_wife_of_Ch9.jpg
+1 FAMS @F74@
+1 FAMC @F96@
+0 @I227@ INDI
+1 NAME William George_I of_the_Hellenes/Oldenburg/
+1 TITL King of Greece
+1 SEX M
+1 BIRT
+2 DATE 24 DEC 1845
+2 PLAC Copenhagen,Denmark
+1 DEAT
+2 DATE 18 MAR 1913
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\wilhelm.2.von_schleswig_holstein_sonderburg_glucksburg.jpg
+1 FAMS @F75@
+1 FAMC @F74@
+0 @I228@ INDI
+1 NAME Olga Constantinovna //
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 3 DEP 1851 
+2 PLAC Saint-Petersburg, Russia
+1 DEAT
+2 DATE  18 JUN 1926
+1 BURI
+2 DATE    NOV 1936
+2 FILE C:\Documents and Settings\User\Desktop\Legacy Photos\Olga_of_Greece_VI.jpg
+1 FAMS @F75@
+1 FAMC @F112@
+0 @I229@ INDI
+1 NAME Nicholas of_Greece //
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE        1872
+1 DEAT
+2 DATE        1938
+1 FAMS @F76@
+1 FAMC @F75@
+0 @I238@ INDI
+1 NAME Louise Alexandra /Mountbatten/
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 13 JUL 1889
+1 DEAT
+2 DATE  7 MAR 1965
+1 FAMS @F77@
+1 FAMC @F27@
+0 @I254@ INDI
+1 NAME Thyra of_Denmark //
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE        1853
+1 DEAT
+2 DATE        1933
+1 FAMS @F85@
+1 FAMC @F74@
+0 @I262@ INDI
+1 NAME George of_Cambridge //
+1 TITL Duke
+1 SEX M
+1 BIRT
+2 DATE        1819
+1 DEAT
+2 DATE        1904
+1 FAMS @F87@
+1 FAMC @F40@
+0 @I278@ INDI
+1 NAME Adolphus 2nd //
+1 TITL Duke of Teck
+1 SEX M
+1 BIRT
+2 DATE        1868
+1 DEAT
+2 DATE        1927
+1 FAMS @F91@
+1 FAMC @F41@
+0 @I279@ INDI
+1 NAME Francis  //
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE        1870
+1 DEAT
+2 DATE        1910
+1 FAMC @F41@
+0 @I280@ INDI
+1 NAME Alexander George of_Teck//
+1 TITL Earl of Athlone
+1 SEX M
+1 BIRT
+2 DATE        1874
+1 DEAT
+2 DATE        1957
+1 FAMS @F38@
+1 FAMC @F41@
+0 @I300@ INDI
+1 NAME Other_issue  //
+1 SEX M
+1 FAMC @F96@
+0 @I305@ INDI
+1 NAME Claudine  //
+1 TITL Princess of Teck
+1 SEX F
+1 BIRT
+2 DATE        1836
+1 DEAT
+2 DATE        1894
+1 FAMC @F98@
+0 @I306@ INDI
+1 NAME Amelie  //
+1 TITL Princess of Teck
+1 SEX F
+1 BIRT
+2 DATE        1838
+1 DEAT
+2 DATE        1893
+1 FAMS @F99@
+1 FAMC @F98@
+0 @I347@ INDI
+1 NAME Alexander of_Hesse and_the_Rhine//
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE  15 JUL 1823
+2 PLAC Darmstadt, Germany
+1 DEAT
+2 DATE        1888
+1 OBJE
+2 FORM jpg
+2 FILE Alexander_of_Hesse.jpg
+1 FAMS @F109@
+1 FAMC @F110@
+0 @I348@ INDI
+1 NAME Julia /von_Hauke/
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 24 NOV 1825
+2 PLAC Warsaw, Poland
+1 DEAT
+2 DATE 19 SEP 1895
+1 OBJE
+2 FORM jpg
+2 FILE Julia_Hauke_by_Vladimir_Hau.jpg
+1 FAMS @F109@
+1 FAMC @F111@
+0 @I353@ INDI
+1 NAME Constantine Nikolaievitch of_Russia//
+1 TITL Grand Duke
+1 SEX M
+1 BIRT
+2 DATE 21 SEP 1827
+2 PLAC Saint-Petersburg, Russia
+1 DEAT
+2 DATE        1892
+1 OBJE
+2 FORM jpg
+2 FILE Romanov,_Constantin_Nicolaievitch,_Grand-Duc_de_Russie,_Gallica,_Nadar.jpg
+1 FAMS @F112@
+1 FAMC @F10@
+0 @I354@ INDI
+1 NAME Elizabeth Alexandra of_Saxe-//
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE 8 JUL 1830
+2 PLAC Altenburg, Germany
+1 DEAT
+2 DATE 6 JUL 1911
+1 OBJE
+2 FORM jpg
+2 FILE Alexandra_of_Saxe.jpg
+1 FAMS @F112@
+1 FAMC @F113@
+0 @I357@ INDI
+1 NAME Charles of_Hesse //
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE        1809
+1 DEAT
+2 DATE        1877
+1 FAMS @F114@
+1 FAMC @F110@
+0 @I405@ INDI
+1 NAME Constantine_I  /Oldenburg/
+1 TITL King of Greece
+1 SEX M
+1 BIRT
+2 DATE  2 AUG 1868
+1 DEAT
+2 DATE 11 JAN 1923
+1 BURI
+2 DATE    NOV 1936
+1 FAMS @F139@
+1 FAMC @F75@
+0 @I463@ INDI
+1 NAME Cecilie of_Greece /Mountbatten/
+1 TITL Princess
+1 SEX F
+1 BIRT
+2 DATE        1911
+1 DEAT
+2 DATE        1937
+1 FAMS @F158@
+1 FAMC @F28@
+0 @I465@ INDI
+1 NAME Christopher  /Oldenburg/
+1 SEX M
+1 BIRT
+2 DATE        1888
+1 DEAT
+2 DATE        1940
+1 FAMS @F1334@
+1 FAMS @F1335@
+1 FAMC @F75@
+0 @I467@ INDI
+1 NAME Olga  //
+1 SEX F
+1 FAMC @F75@
+0 @I476@ INDI
+1 NAME Sophia  //
+1 SEX F
+1 BIRT
+2 DATE        1914
+1 FAMS @F168@
+1 FAMS @F169@
+1 FAMC @F28@
+0 @I486@ INDI
+1 NAME Alexander of_Bulgaria //
+1 TITL Prince
+1 SEX M
+1 BIRT
+2 DATE        1857
+1 DEAT
+2 DATE        1893
+1 FAMS @F172@
+1 FAMC @F109@
+0 @I487@ INDI
+1 NAME Francis Joseph //
+1 SEX M
+1 BIRT
+2 DATE        1861
+1 DEAT
+2 DATE        1924
+1 FAMS @F173@
+1 FAMC @F109@
+0 @I493@ INDI
+1 NAME Louis_III of_Hesse //
+1 TITL Grand Duke
+1 SEX M
+1 BIRT
+2 DATE        1806
+1 DEAT
+2 DATE        1877
+1 FAMS @F174@
+1 FAMS @F1234@
+1 FAMC @F110@
+0 @I497@ INDI
+1 NAME Henry  //
+1 SEX M
+1 BIRT
+2 DATE        1838
+1 DEAT
+2 DATE        1900
+1 FAMS @F1240@
+1 FAMS @F1241@
+1 FAMC @F114@
+0 @I498@ INDI
+1 NAME William  //
+1 SEX M
+1 BIRT
+2 DATE ABT    1845
+1 DEAT
+2 DATE        1900
+1 FAMS @F1238@
+1 FAMC @F114@
+0 @I499@ INDI
+1 NAME Anna  //
+1 SEX F
+1 BIRT
+2 DATE        1843
+1 DEAT
+2 DATE        1865
+1 FAMS @F1237@
+1 FAMC @F114@
+0 @I604@ INDI
+1 NAME Frederick_VIII  //
+1 TITL King of Denmark
+1 SEX M
+1 BIRT
+2 DATE  3 JUN 1843
+1 DEAT
+2 DATE 14 MAY 1912
+1 FAMS @F218@
+1 FAMC @F74@
+0 @I1663@ INDI
+1 NAME Valdemar  //
+1 SEX M
+1 BIRT
+2 DATE        1858
+1 DEAT
+2 DATE        1939
+1 FAMS @F687@
+1 FAMC @F74@
+0 @I2665@ INDI
+1 NAME Nicholas  /Romanov/
+1 SEX M
+1 BIRT
+2 DATE        1831
+1 DEAT
+2 DATE        1891
+1 FAMS @F1263@
+1 FAMC @F10@
+0 @I2666@ INDI
+1 NAME Michael  /Romanov/
+1 SEX M
+1 BIRT
+2 DATE        1832
+1 DEAT
+2 DATE        1909
+1 FAMS @F1264@
+1 FAMC @F10@
+0 @I2671@ INDI
+1 NAME Constantine  /Romanov/
+1 SEX M
+1 BIRT
+2 DATE        1858
+1 DEAT
+2 DATE        1915
+1 FAMS @F1268@
+1 FAMC @F112@
+0 @I2673@ INDI
+1 NAME Mary  //
+1 SEX F
+1 BIRT
+2 DATE        1876
+1 DEAT
+2 DATE        1940
+1 FAMS @F1265@
+1 FAMS @F1336@
+1 FAMC @F75@
+0 @I2677@ INDI
+1 NAME Dimitri  /Romanov/
+1 SEX M
+1 BIRT
+2 DATE        1860
+1 DEAT
+2 DATE        1919
+1 FAMC @F112@
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @I1@
+1 CHIL @I3@
+1 CHIL @I4@
+1 CHIL @I5@
+1 CHIL @I6@
+1 CHIL @I7@
+1 CHIL @I8@
+1 CHIL @I9@
+1 CHIL @I10@
+1 CHIL @I11@
+1 DIV N
+1 MARR
+2 DATE 10 FEB 1840
+0 @F2@ FAM
+1 HUSB @I4@
+1 WIFE @I12@
+1 CHIL @I13@
+1 CHIL @I14@
+1 CHIL @I15@
+1 CHIL @I16@
+1 CHIL @I17@
+1 CHIL @I18@
+1 MARR
+2 DATE 10 MAR 1863
+0 @F7@ FAM
+1 HUSB @I14@
+1 WIFE @I30@
+1 CHIL @I31@
+1 CHIL @I32@
+1 CHIL @I33@
+1 CHIL @I34@
+1 CHIL @I35@
+1 CHIL @I36@
+1 MARR
+2 DATE  6 JUL 1893
+0 @F8@ FAM
+1 HUSB @I22@
+1 WIFE @I5@
+1 CHIL @I38@
+1 CHIL @I84@
+1 CHIL @I79@
+1 CHIL @I83@
+1 CHIL @I86@
+1 CHIL @I39@
+1 CHIL @I85@
+1 MARR
+2 DATE  1 JUL 1862
+0 @F10@ FAM
+1 HUSB @I42@
+1 WIFE @I43@
+1 CHIL @I44@
+1 CHIL @I353@
+1 CHIL @I2665@
+1 CHIL @I2666@
+1 MARR
+2 DATE        1817
+0 @F12@ FAM
+1 HUSB @I32@
+1 WIFE @I51@
+1 CHIL @I52@
+1 CHIL @I53@
+1 DIV N
+1 MARR
+2 DATE 26 APR 1923
+0 @F14@ FAM
+1 HUSB @I57@
+1 WIFE @I52@
+1 CHIL @I58@
+1 CHIL @I59@
+1 CHIL @I60@
+1 CHIL @I61@
+1 DIV N
+1 MARR
+2 DATE 20 NOV 1947
+0 @F16@ FAM
+1 HUSB @I58@
+1 WIFE @I65@
+1 CHIL @I115@
+1 CHIL @I116@
+1 DIV N
+1 MARR
+2 DATE 29 JUL 1981
+0 @F27@ FAM
+1 HUSB @I100@
+1 WIFE @I38@
+1 CHIL @I101@
+1 CHIL @I238@
+1 CHIL @I102@
+1 CHIL @I103@
+1 MARR
+2 DATE        1884
+0 @F28@ FAM
+1 HUSB @I104@
+1 WIFE @I101@
+1 CHIL @I147@
+1 CHIL @I148@
+1 CHIL @I463@
+1 CHIL @I476@
+1 CHIL @I57@
+1 MARR
+2 DATE        1903
+0 @F40@ FAM
+1 HUSB @I132@
+1 WIFE @I134@
+1 CHIL @I262@
+1 CHIL @I135@
+1 CHIL @I136@
+0 @F41@ FAM
+1 HUSB @I137@
+1 WIFE @I136@
+1 CHIL @I30@
+1 CHIL @I278@
+1 CHIL @I279@
+1 CHIL @I280@
+0 @F46@ FAM
+1 HUSB @I145@
+1 WIFE @I146@
+1 CHIL @I173@
+1 CHIL @I174@
+1 CHIL @I175@
+1 CHIL @I176@
+1 CHIL @I177@
+1 CHIL @I178@
+1 CHIL @I179@
+1 CHIL @I180@
+1 CHIL @I51@
+1 CHIL @I181@
+0 @F56@ FAM
+1 HUSB @I182@
+1 WIFE @I183@
+1 CHIL @I145@
+0 @F57@ FAM
+1 HUSB @I184@
+1 WIFE @I185@
+1 CHIL @I186@
+1 CHIL @I182@
+0 @F71@ FAM
+1 HUSB @I207@
+1 WIFE @I208@
+1 CHIL @I146@
+0 @F74@ FAM
+1 HUSB @I225@
+1 WIFE @I226@
+1 CHIL @I604@
+1 CHIL @I12@
+1 CHIL @I227@
+1 CHIL @I41@
+1 CHIL @I254@
+1 CHIL @I1663@
+1 MARR
+2 DATE        1842
+0 @F75@ FAM
+1 HUSB @I227@
+1 WIFE @I228@
+1 CHIL @I405@
+1 CHIL @I466@
+1 CHIL @I163@
+1 CHIL @I229@
+1 CHIL @I2673@
+1 CHIL @I104@
+1 CHIL @I465@
+1 CHIL @I467@
+1 MARR
+2 DATE        1867
+0 @F96@ FAM
+1 HUSB @I298@
+1 WIFE @I299@
+1 CHIL @I226@
+1 CHIL @I300@
+1 MARR
+2 DATE        1810
+0 @F98@ FAM
+1 HUSB @I303@
+1 WIFE @I304@
+1 CHIL @I305@
+1 CHIL @I137@
+1 CHIL @I306@
+0 @F108@ FAM
+1 HUSB @I345@
+1 WIFE @I346@
+1 CHIL @I225@
+1 MARR
+2 DATE        1810
+0 @F109@ FAM
+1 HUSB @I347@
+1 WIFE @I348@
+1 CHIL @I224@
+1 CHIL @I100@
+1 CHIL @I486@
+1 CHIL @I25@
+1 CHIL @I487@
+1 MARR
+2 DATE        1851
+0 @F110@ FAM
+1 HUSB @I349@
+1 WIFE @I350@
+1 CHIL @I493@
+1 CHIL @I357@
+1 CHIL @I347@
+1 CHIL @I45@
+1 MARR
+2 DATE        1804
+0 @F111@ FAM
+1 HUSB @I351@
+1 WIFE @I352@
+1 CHIL @I348@
+0 @F112@ FAM
+1 HUSB @I353@
+1 WIFE @I354@
+1 CHIL @I165@
+1 CHIL @I228@
+1 CHIL @I2671@
+1 CHIL @I2677@
+1 MARR
+2 DATE        1848
+0 @F113@ FAM
+1 HUSB @I355@
+1 WIFE @I356@
+1 CHIL @I354@
+0 @F114@ FAM
+1 HUSB @I357@
+1 WIFE @I358@
+1 CHIL @I22@
+1 CHIL @I497@
+1 CHIL @I498@
+1 CHIL @I499@
+1 MARR
+2 DATE        1836
+0 @F115@ FAM
+1 HUSB @I360@
+1 WIFE @I361@
+1 CHIL @I207@
+0 @F116@ FAM
+1 HUSB @I362@
+1 WIFE @I363@
+1 CHIL @I208@
+0 @F117@ FAM
+1 HUSB @I364@
+1 WIFE @I365@
+1 CHIL @I183@
+0 TRLR
+

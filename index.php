@@ -1,177 +1,251 @@
-<?php
+<?php 
 header('Content-type: text/html; charset=utf-8'); 
-require_once ("_sql.inc.php");
+
+// test PHP release
+if (version_compare(PHP_VERSION, '5.3.0', '<')) 
+{ echo '<span>Version PHP : <b>'.phpversion().'</b>'; 
+  echo '<br> Geneotree requires version <b>5.3</b> or higher. You need to change your PHP version.';
+  return;
+}
+
+mb_internal_encoding('UTF-8');
+require_once ("_functions.php");
 
 function verif_config()
-{	include ("config.php");
+{    global $sql_pref;
+     global $sql_base;
+     include ("config.php");
 // if ($INSTALLATION_OK) {echo 'OK';} else {echo 'KO';}
-	return $INSTALLATION_OK;
+    return $INSTALLATION_OK;
 }
 
-function recup_sosa_principal ($base, $id)
-{ 
-	$query = 'SELECT CONCAT(prenom1," ",nom) 
-		FROM got_'.$base.'_individu
-		WHERE id_indi = "'.$id.'"';
-	$result = sql_exec($query);
-	$row = mysqli_fetch_row($result);
+function fctBaseMiss($base)
+{   global $sql_pref;
+    global $pool;
 
-	return ($row[0]);
+    $query = 'SELECT 1 FROM `'.$sql_pref.'_'.$base.'_individu` WHERE 0=1';
+    $result = @mysqli_query($pool,$query);
+    if (mysqli_errno($pool) != 0)
+    {    return FALSE;}
+    else
+    {    return TRUE;}
 }
 
-/*********************************DEBUT DU SCRIPT *************************/
+/*********************************END OF SCRIPT *************************/
+
 if (!verif_config() and $_REQUEST['install'] != "OK")
-{	echo '<script language="JavaScript" type="text/javascript">';
-	echo 'window.location = "install.php"';
-	echo '</script>'; 
-	exit;
+{    echo '<script language="JavaScript" type="text/javascript">';
+    echo 'window.location = "install.php"';
+    echo '</script>'; 
+    exit;
 }
 
-$pool = sql_connect();  
+$pool = sql_connect();
 
-// si tout premier acces à l'application après l'installation. 
-// initialise la langue de l'utilisateur en fonction de la langue du navigateur. 
+// stockage des cookies
+$ExpireCookie = time()+60*60*24*30;
+
+// alimentation des POSTs vides
+
 if (!isset($_REQUEST['lang']))
-{	if (mb_substr($_SERVER['HTTP_ACCEPT_LANGUAGE'],0,2) == 'fr')
-	{	$_REQUEST['lang'] = "fr";
-	}	else 
-	{	$_REQUEST['lang'] = 'en';
-	}
+{ if (isset($_COOKIE["lang"])) 
+  { $_REQUEST['lang'] = $_COOKIE["lang"];
+  } else 
+  { if (mb_substr($_SERVER['HTTP_ACCEPT_LANGUAGE'],0,2) == 'fr') 
+    { $_REQUEST['lang'] = "fr";
+    } else 
+	{ $_REQUEST['lang'] = 'en';
+    }
+  }
 }
-if (!isset($_REQUEST['ibase'])) {$_REQUEST['ibase'] = "";}
-if (!isset($_REQUEST['lcont'])) {$_REQUEST['lcont'] = "";}
+// setcookie("lang",$_REQUEST['lang'],$ExpireCookie);
+require_once ('languages/'.$_REQUEST["lang"].'.php');
 
-require_once ("languages/lang.".$_REQUEST['lang'].".inc.php");	
-
-			// detection chargement des bases geo. Si pas chargées, on présente l'onglet Carto a l'ouverture d'admin.
-$query = 'SELECT code_pays FROM g__geodept LIMIT 0,1';
-$result = sql_exec($query,2);		// les bases ne sont pas forcement encore chargees
-$row = @mysqli_fetch_row($result);
-if (isset($row[0]) ) {$carto = '';} else {$carto = 'geo';}
-
-echo "<HTML>";
-echo "<HEAD>";
-echo '<META http-equiv="Content-type" content="text/html; charset=utf-8" name="author" content="Damien Poulain">';
-echo "<TITLE>GeneoTree v".$got_lang['Relea']." - ".$got_lang['Accue']."</TITLE>";
-echo "<LINK rel='stylesheet' href='themes/wikipedia.css' type='text/css'>";
-echo '<link rel="shortcut icon" href="themes/geneotre.ico">';
-echo "</HEAD>";
-
-echo "<form name=rech_typ method=post>";
-	echo '<table><tr>';
-	/**************************** ADD LANGUAGE HERE *****************************/
-	echo '<td align=center><font size=1><b>Fr</b></font><br><a href="index.php?lang=fr" title='.$got_lang['IBFr'].'><img border="0" src="themes/fr.gif" border="0" width="25" height="16"></a></td>';
-	echo '<td align=center><font size=1><b>En</b></font><br><a href="index.php?lang=en" title='.$got_lang['IBEn'].'><img border="0" src="themes/en.gif" border="0" width="25" height="16"></a></td>';
-	echo '<td align=center><font size=1><b>Hu</b></font><br><a href="index.php?lang=hu" title='.$got_lang['IBHu'].'><img border="0" src="themes/hu.gif" border="0" width="25" height="16"></a></td>';
-	echo '<td align=center><font size=1><b>It</b></font><br><a href="index.php?lang=it" title='.$got_lang['IBIt'].'><img border="0" src="themes/it.gif" border="0" width="25" height="16"></a></td>';
-	echo '<td align=center>&nbsp;<td>';
-	/**************************** END LANGUAGE AREA ****************************/
-	
-	echo '<td width=300px>';
-	echo '   <input type=text name=lcont size=28 value="'.$got_lang['Reche'].' '.$got_lang['Noms'].'">';
-	echo '   <input type=submit value="'.$got_lang['Reche'].'">';
-	echo '</td>';
-	
-	echo '<td width=450px class=titre>'.$got_lang['ChoBa'].'</td>';
-	echo '<td class=menu_td width=100px><a class=menu_td href=admin.php?lang='.$_REQUEST['lang'].'&ibase=&ipag2='.$carto.' title="'.$got_lang['IBAdm'].'"><b>'.$got_lang['Admin'].'</b></a></td>';
-	echo '</tr></table>';
-echo "</form>";
-
-	// positionnement du focus sur le formulaire
-echo '<script language="JavaScript" type="text/javascript">
-document.rech_typ.lcont.focus();
-	</script>';	
-
-
-/******************************************* AFFICHAGE DES BASES (bouton RECHERCHE) ********************************************************/
-
-if ($_REQUEST['ibase'] == '' and $_REQUEST['lcont'] == '')
-{	echo '<table class="bord_haut bord_bas">';
-	echo '<tr class=ligne_tr2>';
-	echo '<td class="titre bords_verti bord_bas">'.$got_lang['Bases'].'</td>';
-	echo '<td class="titre bords_verti bord_bas">'.$got_lang['DefIn'].'</td>';
-	echo '<td class="titre bords_verti bord_bas">'.$got_lang['Taill'].'</td>';
-	echo '<td class="titre bords_verti bord_bas">'.$got_lang['Sourc'].'</td>';
-	echo '<td class="titre bords_verti bord_bas">'.$got_lang['Media'].'</td>';
-	echo '<td class="titre bords_verti bord_bas">'.$got_lang['PriCo'].'</td>';
-	echo '</tr>';
-	
-	$query = 'SELECT * FROM g__base ORDER BY 1';
-	$result = sql_exec($query,2);
-	
-	$i=0;
-	while ($row = @mysqli_fetch_row($result))
-	{
-		if (strpos($row[0], '$club') )
-		{	$href_menu = "source.php";
-		} else
-		{	$href_menu = "arbre_ascendant.php";
-		}
-		if ($i % 2 == 0) {echo '<tr class="ligne_tr1">';} else {echo '<tr class="ligne_tr2">';}
-		echo "<td class=bords_verti><a href = ".$href_menu."?ibase=".$row[0]."&lang=".$_REQUEST['lang'].">".str_replace('$','',$row[0])."</td></a>";
-		echo "<td class=bords_verti><b>".recup_sosa_principal($row[0],$row[1])."</b></td>";
-		echo "<td class=bords_verti align='right'>".$row[2]."</td>";
-		echo "<td class=bords_verti align='center'>".$row[4]."</td>";
-		echo "<td class=bords_verti align='center'>".$row[5]."</td>";
-		echo "<td class=bords_verti>".mb_substr($row[3],0,120)."</td>";
-		echo "</tr>";
-		$i++;
-	}
-	echo "</table>";
+if (!isset($_REQUEST['theme']))
+{    if (isset($_COOKIE["theme"])) 
+    {    $_REQUEST['theme'] = $_COOKIE["theme"];
+    } else 
+    {    $_REQUEST['theme'] = "wiki";
+    }
 }
-/******************************************* RECHERCHE MULTI BASES (bouton RECHERCHE) ********************************************************/
+setcookie("theme",$_REQUEST['theme'],$ExpireCookie);
 
-if ($_REQUEST['lcont'] !== NULL and $_REQUEST['lcont'] !== "")
-{	echo '<table><tr><td class=menu_td>';
-	echo '<a class=menu_td HREF = index.php>'.$got_lang['Retou'].'</a>';
-	echo '</td></tr></table>';
 
-	$query = 'SELECT * FROM g__base';
-	$result = sql_exec($query,2);
-	if ( @mysqli_num_rows($result) == '0' or !@mysqli_num_rows($result) )
-	{	echo '<br><b>'.$got_lang['MesCh'].'</b>';
-		exit;
-	} 
+if (!isset($_REQUEST['inom'])) {$_REQUEST['inom'] = NULL;}
 
-	$liste='';
-	while ($row = @mysqli_fetch_row($result))
-	{	$query = 'SELECT distinct nom FROM got_'.$row[0].'_individu WHERE nom LIKE "'.$_REQUEST['lcont'].'%"';
-		$result2 = sql_exec($query,0);
+echo '
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META http-equiv="Content-type" content="text/html; charset=utf-8" name="author" content="Damien Poulain">
+<meta name="viewport" content="width=device-width,height=device-height,initial-scale=0.6"/>
+<TITLE>GeneoTree v'.$GeneoTreeRelease.' - '.$got_lang["Accue"].'</TITLE>
+<LINK rel="stylesheet" href=geneotree.css type="text/css">
+<link rel="icon" href="themes/geneotree.ico?v=2" type="image/x-icon">
+</HEAD>
+<BODY>
+<form name=rech_typ method=post>
+<table style="margin-bottom:10px; margin-left:auto; margin-right:auto;">
+<tr>';
 
-		while ($row2 = mysqli_fetch_row($result2))
-		{	$liste['nom'][] = $row2[0];
-			$liste['base'][]  = $row[0];
-		}
-	}
+$query = "SHOW TABLES FROM ".$sql_base." LIKE '".$sql_pref."__base'";
+$ResultBase = sql_exec($query);
 
-	if ( !$liste )
-	{	echo '<br><b>'.$got_lang['NomPr'].' '.$got_lang['NonAf'].'</b>';
-		exit;
-	} 
+// search box & title
+if (sql_num_rows($ResultBase) == 1)
+{ $query = 'SELECT * FROM `'.$sql_pref.'__base` ORDER BY 1';
+  $result = sql_exec($query);
+  if (sql_num_rows($result) >= 1)
+  { echo '
+    <td>
+    <input type=text name=inom size=28>
+    <input type=submit value="'.$got_lang['Reche'].'"></td>';
 
-	array_multisort ($liste['nom'],$liste['base']);
+    // positionnement du focus sur le formulaire
+    echo '
+    <script language="JavaScript" type="text/javascript">
+    document.rech_typ.inom.focus();
+    </script>'; 
 
-	echo '<br><table class="bord_haut bord_bas">';
-	$ii = 0;
-	$nom_old = "";
-	while ($ii < count($liste['nom']))
-	{	if ($ii % 2 == 0) 
-		{	echo '<tr class="ligne_tr1">';} else {echo '<tr class="ligne_tr2">';
-		}
-		if ($liste['nom'][$ii] !== $nom_old)
-		{	echo "<td class=bords_verti>".$liste['nom'][$ii]."</td>";
-			echo "<td class=bords_verti><a href=listes.php?ibase=".$liste['base'][$ii]."&ipag=no&lcont=".$liste['nom'][$ii].">".$liste['base'][$ii]."</td></a>";
-		} else
-		{	echo "<td class=bords_verti></td>";
-			echo "<td class=bords_verti><a href=listes.php?ibase=".$liste['base'][$ii]."&ipag=no&lcont=".$liste['nom'][$ii].">".$liste['base'][$ii]."</td></a>";
-		}
-		echo '</tr>';
-		$nom_old = $liste['nom'][$ii];
-		$ii++;
-	}
-	echo '</table>';
+    // titre "choisissez une base"
+    echo '
+    <td width=450px align=center class=titre>'.$got_lang['ChoBa'].'</td>';
+
+  } else 
+  { echo "
+    <td width=450px align=center>".$got_lang['MesCh']."</td>";
+  }
+} else 
+{ echo "
+  <td width=450px align=center>".$got_lang['MesCh']."</td>";
 }
 
-echo '<p align = "center"><font size="1"><b><a href=http://www.geneotree.com>'.$got_lang['Credi'].'</a></b></font></p>';
+// languages
+$handle = opendir('./languages');
+while ($file = readdir($handle))
+{    if (!is_dir($file) AND substr($file,-3) == 'php')
+    {   $Lang = substr($file,0,2);
+        $IB = 'IB'.$Lang;
+        echo '
+        <td align=center><font size=1><b>'.$Lang.'</b></font><br><a href=index.php?lang='.$Lang.'><img border="0" src="languages/'.$Lang.'.png" width=35 height=22><span>'.$got_lang[$IB].'</span></a></td>';
+    }
+}
 
+// bouton administration
+echo '
+<td align=right width=200px><a class=menu_td href=admin.php?lang='.$_REQUEST['lang'].'><b>'.$got_lang['Admin'].'</b><span>'.$got_lang['IBAdm'].'</span></a></td>
+</tr>
+</table>
+</form>';
+
+// bases disponibles 
+if (!isset($_REQUEST['inom']))
+{
+
+  $EnteteCol = array(
+   "","","","",""
+  ,$got_lang['Bases']
+  ,$got_lang['MenLa']
+  ,$got_tag['CTRY']
+  ,$got_tag['INDI']
+  ,$got_lang['Media']
+  ,$got_lang['Consa']
+  ,$got_lang['Carte']
+  ,$got_lang['Logic']
+  ,$got_tag['VERS']
+  ,$got_tag['DATE']
+  );
 ?>
+  <table id="TabMain" class="bord_bas bord_haut" style="margin-bottom:10px; margin-left:auto; margin-right:auto;">
+      <thead id="TabMain-header" class=titre_col></thead>
+      <tbody id="TabMain-body"></tbody>
+  </table></td>
+
+  <script>
+  // php variables
+  var Annee        = "<?php echo $got_lang["Annee"];?>";
+  var gotLang      = <?php echo json_encode($got_lang);?>; 
+  var gotTag       = <?php echo json_encode($got_tag);?>;
+  var HrefBase     = '&lang=<?php echo $_REQUEST["lang"]?>';
+  var sql_pref     = "<?php echo $sql_pref;?>"; 
+  var PagePhp      = "index.php";
+
+  </script>
+  <script src="script.min.js"></script>
+  <script>
+  pagination('TabMain','<?php echo json_encode($EnteteCol); ?>','recup_bases',sortColumn = 'base');
+  </script>
+<?php
+}
+else
+// bases contenant la recherche
+{    echo '
+    <table>
+    <tr>
+    <td class=menu_td><a class=menu_td HREF = index.php>'.$got_lang['Retou'].'</a></td>
+    </tr>
+    </table>';
+
+    $query = 'SELECT * FROM `'.$sql_pref.'__base`';
+    $result = sql_exec($query);
+    if (@mysqli_num_rows($result) == '0' or !@mysqli_num_rows($result))
+    {    echo '
+        <br><b>'.$got_lang['MesCh'].'</b>';
+        return;
+    } 
+
+    $liste["nom"] = array(); $liste["base"] = array();
+    while ($row = @mysqli_fetch_row($result))
+    {   $query = 'SELECT distinct nom FROM `'.$sql_pref.'_'.$row[0].'_individu` WHERE nom LIKE "'.$_REQUEST['inom'].'%"';
+        $result2 = sql_exec($query,0);
+
+        while ($row2 = mysqli_fetch_row($result2))
+        {   $liste['nom'][]   = $row2[0];
+            $liste['base'][]  = $row[0];
+        }
+    }
+
+    if (!$liste)
+    {    echo '
+        <br><b>'.$got_lang['NomPr'].' '.$got_lang['NonAf'].'</b>';
+        return;
+    } 
+
+    array_multisort ($liste['nom'],$liste['base']);
+
+    echo '
+    <br>
+    <table class="bord_haut bord_bas">';
+    $ii = 0;
+    $nom_old = "";
+    while ($ii < count($liste['nom']))
+    {    if ($ii % 2 == 0) 
+        {    echo '
+            <tr>';
+        } else 
+        {    echo '
+            <tr class="ligne_tr2">';
+        }
+        if ($liste['nom'][$ii] !== $nom_old)
+        {    echo '
+            <td class=bords_verti>'.$liste["nom"][$ii].'</td>
+            <td class=bords_verti><a href=listes.php?ibase='.urlencode($liste["base"][$ii]).'&pag=nom&rech='.$liste["nom"][$ii].'>'.$liste["base"][$ii].'</td></a>';
+        } else
+        {    echo '
+            <td class=bords_verti></td>
+            <td class=bords_verti><a href=listes.php?ibase='.urlencode($liste["base"][$ii]).'&pag=nom&rech='.$liste['nom'][$ii].'>'.$liste['base'][$ii].'</td></a>';
+        }
+        echo '
+        </tr>';
+        $nom_old = $liste["nom"][$ii];
+        $ii++;
+    }
+    echo '
+    </table>';
+}
+
+echo '
+<p align=center><font size=2><b><a href=http://www.geneotree.com>'.$got_lang['Credi'].'</a></b></font></p>
+</BODY>
+';
+mysqli_close($pool);

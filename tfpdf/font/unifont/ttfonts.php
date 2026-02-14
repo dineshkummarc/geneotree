@@ -1,6 +1,4 @@
 <?php
-
-
 /*******************************************************************************
 * TTFontFile class                                                             *
 *                                                                              *
@@ -8,8 +6,8 @@
 * written in Python - http://www.reportlab.com/software/opensource/            *
 * together with ideas from the OpenOffice source code and others.              *
 *                                                                              *
-* Version:  1.04                                                               *
-* Date:     2011-09-18                                                         *
+* Version:  1.06                                                               *
+* Date:     2022-12-20                                                         *
 * Author:   Ian Back <ianb@bpm1.com>                                           *
 * License:  LGPL                                                               *
 * Copyright (c) Ian Back, 2010                                                 *
@@ -37,39 +35,46 @@ define("GF_TWOBYTWO",(1 << 7));
 
 class TTFontFile {
 
-var $maxUni;
-var $_pos;
-var $numTables;
-var $searchRange;
-var $entrySelector;
-var $rangeShift;
-var $tables;
-var $otables;
-var $filename;
-var $fh;
-var $hmetrics;
-var $glyphPos;
-var $charToGlyph;
-var $ascent;
-var $descent;
-var $name;
-var $familyName;
-var $styleName;
-var $fullName;
-var $uniqueFontID;
-var $unitsPerEm;
-var $bbox;
-var $capHeight;
-var $stemV;
-var $italicAngle;
-var $flags;
-var $underlinePosition;
-var $underlineThickness;
-var $charWidths;
-var $defaultWidth;
-var $maxStrLenRead;
+public $maxUni;
+public $maxUniChar;
+public $sFamilyClass;
+public $sFamilySubClass;
+public $_pos;
+public $numTables;
+public $searchRange;
+public $entrySelector;
+public $rangeShift;
+public $tables;
+public $otables;
+public $filename;
+public $fh;
+public $hmetrics;
+public $glyphPos;
+public $charToGlyph;
+public $codeToGlyph;
+public $glyphdata;
+public $ascent;
+public $descent;
+public $TTCFonts;
+public $version;
+public $name;
+public $familyName;
+public $styleName;
+public $fullName;
+public $uniqueFontID;
+public $unitsPerEm;
+public $bbox;
+public $capHeight;
+public $stemV;
+public $italicAngle;
+public $flags;
+public $underlinePosition;
+public $underlineThickness;
+public $charWidths;
+public $defaultWidth;
+public $maxStrLenRead;
 
-	function TTFontFile() {
+	function __construct() {
 		$this->maxStrLenRead = 200000;	// Maximum size of glyf table to read in as string (otherwise reads each glyph from file)
 	}
 
@@ -749,7 +754,7 @@ var $maxStrLenRead;
 				$up = unpack("n", substr($data,0,2));
 			}
 
-			if ($glyphLen > 2 && ($up[1] & (1 << 15)) ) {	// If number of contours <= -1 i.e. composiste glyph
+			if ($glyphLen > 2 && ($up[1] & (1 << 15)) ) {	// If number of contours <= -1 i.e. composite glyph
 				$pos_in_glyph = 10;
 				$flags = GF_MORE;
 				$nComponentElements = 0;
@@ -1080,10 +1085,6 @@ var $maxStrLenRead;
 		return $stm ;
 	}
 
-
-
-
 }
-
 
 ?>

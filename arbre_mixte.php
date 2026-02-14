@@ -1,161 +1,152 @@
 <?php
-require_once ("_recup_ascendance.inc.php");
-require_once ("_recup_descendance.inc.php");
-require_once ("_boites.inc.php");
-require_once ("_caracteres.inc.php");
+require_once ("_get_ascendancy.php");
+require_once ("_get_descendancy.php");
+require_once ("_functions.php");
 
+for ($ii=0; $ii < 60; $ii++) {$grid[$ii] = "";}
+$grid[0] = "TR";$grid[10] = "TR";$grid[20] = "TR";$grid[30] = "TR";$grid[40] = "TR";$grid[50] = "TR";
+$grid[2] = "4";$grid[4] = "5";$grid[6] = "6";$grid[8] = "7";
+$grid[35] = "1";$grid[23] = "2";$grid[27] = "3";$grid[12] = "4";$grid[14] = "5";$grid[16] = "6";$grid[18] = "7";
 
 /*************************************** DEBUT DU SCRIPT *********************************************/
-//$titre_page = "GeneoTree v".$got_lang['Relea']." - ".$got_lang['ArMix'];
 
-require_once ("menu.php");
+// On ouvre le masque  général
+include ("menu.php");
 
-echo '<table><tr><td width=925px>';   // 1ere colonne sur 3
-
-$ancetres['id_indi'] [0] = $_REQUEST['id'];
+$ancetres['id_indi'][0] = $_REQUEST['id'];
 $cpt_generations = 0;
 recup_ascendance ($ancetres,0,2,'ME_G');
-$cles = array_keys($ancetres);
-$url = url_request();
-//afficher_ascendance();
-
-echo '<table><tr>';
-echo '<td><a HREF=arbre_mixte_pdf.php'.$url.' title="'.$got_lang['IBPdf'].'" target=_blank><img border=0 width=35 heigth=35 src=themes/icon-print.png></a></td>';
-echo "<td class=titre width=100%>".$got_lang['ArMix']." ".$ancetres['prenom1'][0]." ".$ancetres['nom'][0]."</td>";
-echo '</tr></table>';
-
-							// affichage ascendance
-for ($ii = 0; $ii < count($ancetres["sosa_d"]); $ii++)
-{	$sosa_d = $ancetres["sosa_d"][$ii];
-	
-	$coor_cellu[0] = recup_pts_mix ("pa",$sosa_d);
-	
-	if ($sosa_d != 1) {$coor_cellu[0] = $coor_cellu[0] * 3.1;} else {$coor_cellu[0]= 422;}
-
-	if ($sosa_d < 2)	{$coor_cellu[1] = 480;}
-	elseif ($sosa_d < 4) {$coor_cellu[1] = 300;}
-	else {$coor_cellu[1] = 120;}
-
-	if ($sosa_d != 1)	{	$coor_cellu[2] = 220;} else {$coor_cellu[2] = 125;}
-
-	$coor_cellu[3] = 158;
-	$idbulle = 'A1'.$sosa_d;
-	
-//	$i = array_search($ii,$ancetres['sosa_d']);   // ????
-	for ($ik = 0; $ik < count ($cles); $ik++)  {	$tab_indiv[$cles[$ik]] = $ancetres[$cles[$ik]][$ii];	}
-	afficher_cellule ($tab_indiv, $idbulle, $coor_cellu[0], $coor_cellu[1], "V2");
-
-	if ($sosa_d !== 1)
-	{	if ($sosa_d % 2 == 0)
-		{	$coor_trait[0] = $coor_cellu[0] + $coor_cellu[2] / 2;
-		} else
-		{	if ($sosa_d > 3)
-			{	$coor_trait[0] = $coor_cellu[0] - 43;
-			} else
-			{	$coor_trait[0] = $coor_cellu[0] - 147;
-			}
-		}
-		$coor_trait[1] = $coor_cellu[1] + 170;
-		if ($sosa_d > 3)
-		{	$coor_trait[2] = 156;
-		} else
-		{	$coor_trait[2] = 260;
-		}
-		afficher_trait_horizontal($coor_trait);
-
-		// traits verticaux entrants
-		$coor_trait[0] = $coor_cellu[0] + $coor_cellu[2] / 2;
-		$coor_trait[1] = $coor_cellu[1] + 163;
-		$coor_trait[2] = 10;
-		afficher_trait_vertical($coor_trait);
-	} else
-	{	$coor_trait[0] = $coor_cellu[0] + 60;
-		$coor_trait[1] = $coor_cellu[1] - 10;
-		$coor_trait[2] = 14;
-		afficher_trait_vertical($coor_trait);
-		$stoc_xxcentral = $coor_trait[0];
-		$stoc_yycentral = $coor_trait[1];
-	}
+// afficher_ascendance();return;
+$nb_fs = 0;
+if (!empty($ancetres_fs["id_fs"] [$_REQUEST['id']])) 
+{ $nb_fs = count($ancetres_fs["id_fs"] [$_REQUEST['id']]);
+}
+switch ($nb_fs)
+{   case 0: break;
+    case 1: $grid[33]=1; break;
+    case 2: $grid[33]=1;
+            $grid[37]=2; break;
+    case 3: $grid[33]=1;$grid[34]=2;
+            $grid[36]=3; break;
+    case 4: $grid[33]=1;$grid[34]=2; 
+            $grid[36]=3;$grid[37]=4; break;
+    case 5: $grid[32]=1;$grid[33]=2;$grid[34]=3;
+            $grid[36]=4;$grid[37]=5; break;
+    case 6: $grid[32]=1;$grid[33]=2;$grid[34]=3;
+            $grid[36]=4;$grid[37]=5;$grid[38]=6; break;
+    case 7: $grid[31]=1;$grid[32]=2;$grid[33]=3;$grid[34]=4;
+            $grid[36]=5;$grid[37]=6;$grid[38]=7; break;
+    default: $grid[31]=1;$grid[32]=2;$grid[33]=3;$grid[34]=4;
+            $grid[36]=5;$grid[37]=6;$grid[38]=7;$grid[39]=8; break;
 }
 
-		// affichage des enfants
-$descendants = array();
-$descendants ['id_indi'] [0] = $_REQUEST['id'];
+$descendants ['id_indi'][0] = $_REQUEST['id'];
 $cpt_generations = 0;
 recup_descendance (0,0,1,'ME_G','');
-$cles = array_keys($descendants);
+$query = 'DROP TABLE IF EXISTS '.$sql_pref.'_'.$ADDRC.'_desc_cles';
+sql_exec($query);
+// afficher_descendance();return;
 
-$nb_enfants = count($descendants['id_indi']) - 1;	// on enl�ve le personnage central
-if ($nb_enfants <= 11)	{$max_enfants = $nb_enfants;} else {$max_enfants = 11;}
-for ($ii = 1; $ii <= $max_enfants; $ii++)
-{	$coor_cellu[0] = recup_pts_mix("pe",$ii,$nb_enfants);
-	$coor_cellu[0] = $coor_cellu[0] * 2.8;
-	$coor_cellu[1] = 660;
-	$coor_cellu[2] = 80;
-	$coor_cellu[3] = 158;
-	$idbulle = 'A3'.$descendants['id_indi'][$ii];
-
-	for ($ik = 0; $ik < count ($cles); $ik++)  {	$tab_indiv[$cles[$ik]] = $descendants[$cles[$ik]][$ii];	}
-	afficher_cellule ($tab_indiv, $idbulle, $coor_cellu[0], $coor_cellu[1], "V1");
-
-	$coor_trait[0] = $coor_cellu[0] + $coor_cellu[2] / 2;
-	if ($ii == 1)	{$stoc_xxdeb = $coor_trait[0];}
-	$coor_trait[1] = $coor_cellu[1] - 10;
-	$coor_trait[2] = 14;
-	afficher_trait_vertical($coor_trait);
+$nb_desc= @count($descendants["generation"]) - 1;
+switch ($nb_desc)
+{   case 0: break;
+    case 1: $grid[45]=1; break;
+    case 2: $grid[44]=1;$grid[46]=2; break;
+    case 3: $grid[43]=1;$grid[45]=2;$grid[47]=3; break;
+    case 4: $grid[43]=1;$grid[44]=2;$grid[46]=3;$grid[47]=4; break;
+    case 5: $grid[43]=1;$grid[44]=2;$grid[45]=3;$grid[46]=4;$grid[47]=5; break;
+    case 6: $grid[42]=1;$grid[43]=2;$grid[44]=3;$grid[45]=4;$grid[46]=5;$grid[47]=6; break;
+    case 7: $grid[42]=1;$grid[43]=2;$grid[44]=3;$grid[45]=4;$grid[46]=5;$grid[47]=6;$grid[48]=7; break;
+    case 8: $grid[41]=1;$grid[42]=2;$grid[43]=3;$grid[44]=4;$grid[45]=5;$grid[46]=6;$grid[47]=7;$grid[48]=8; break;
+    default: $grid[41]=1;$grid[42]=2;$grid[43]=3;$grid[44]=4;$grid[45]=5;$grid[46]=6;$grid[47]=7;$grid[48]=8;$grid[49]=9; break;
 }
 
-if ($nb_enfants !== 0)
-{	$coor_trait[2] = $coor_trait[0] - $stoc_xxdeb;
-	$coor_trait[0] = $stoc_xxdeb;
-	afficher_trait_horizontal($coor_trait);
-
-	$coor_trait[0] = $stoc_xxcentral;
-	$coor_trait[1] = $stoc_yycentral + 170;
-	$coor_trait[2] = 10;
-	afficher_trait_vertical($coor_trait);
-}
-
-						// affichage des fr�res et soeurs
-$i = 0;
-while ($ancetres_fs['id_indi'][ $_REQUEST['id'] ][$i] == $_REQUEST['id'] and $ancetres_fs['id_indi'][ $_REQUEST['id'] ][$i] != '')
-{	$i++;
-}
-$nb_freres = $i;
-
-if ($nb_freres <= 10)	{$max_freres = $nb_freres;} else {$max_freres = 10;}
-
-for ($ii = 0; $ii < $max_freres; $ii++)
-{	$coor_cellu[0] = recup_pts_mix("pf",$ii,$max_freres);
-	$coor_cellu[0] = $coor_cellu[0] * 3.25;
-	$coor_cellu[1] = 480;
-	$coor_cellu[2] = 90;
-	$coor_cellu[3] = 158;
-	$idbulle = 'A2'.$ancetres_fs['id_fs'][ $_REQUEST['id'] ][$ii];
-
-	$query = 'SELECT nom,prenom1,profession,date_naiss,lieu_naiss,sosa_dyn,sexe,date_deces,lieu_deces
-		FROM got_'.$_REQUEST['ibase'].'_individu
-		WHERE id_indi = '.$ancetres_fs['id_fs'][ $_REQUEST['id'] ][$ii];
-	$result = sql_exec($query);
-	$row = mysqli_fetch_row($result);
-
-	$cles = NULL;
-	$cles["id_indi"] = $ancetres_fs['id_fs'][ $_REQUEST['id'] ][$ii];
-	$cles["nom"] = $row[0];
-	$cles["prenom1"] = $row[1];
-	$cles["profession"] = $row[2];
-	$cles["date_naiss"] = $row[3];
-	$cles["lieu_naiss"] = $row[4];
-	$cles["sosa_dyn"] = $row[5];
-	$cles["sexe"] = $row[6];
-	$cles["date_deces"] = $row[7];
-	$cles["lieu_deces"] = $row[8];
-
-	afficher_cellule ($cles, $idbulle, $coor_cellu[0], $coor_cellu[1], "V1");
-}
-
-echo '</td><td width=1px></td>';  //2eme colonne vide
-echo'<td width=355px>';   //3eme colonne fiche
-require_once ("fiche.php");
-echo '</td></tr></table>'; // on ferme tout correctement
+// bouton PDF
+// echo '<table width=100% style="border-collapse: separate;"><tr>'; // collapse incompatible avec arrondi
+// echo '<td><a HREF=arbre_mixte_pdf.php'.$url.'&id='.$_REQUEST["id"].' title="'.$got_lang['IBPdf'].'" target=_blank><img width=35 heigth=35 src=themes/icon-print.png></a></td>';
+// echo '</tr></table>';
 ?>
+<script>
+DivIcons ("DivIcon1", "themes/icon-print.png", "arbre_mixte_pdf.php" + "?" + HrefBase + "&id=<?php echo $_REQUEST['id']?>");
+</script>
+<?php
+echo '
+<table style="border-collapse: separate;border-spacing: 15px 5px;">';
+for ($ii=0; $ii < 60; $ii++)
+{ //echo '<br>'.$ii.'|'.$grid[$ii];
+// changement de lignes
+    if ($grid[$ii] == "TR") 
+    {   if ($ii == 20) {echo '</tr><tr><td></td><td colspan=3 align=center><img width=100% heigth=100% src=themes/branches_asc2.png></td><td></td><td colspan=3 align=center><img width=100% heigth=100% src=themes/branches_asc2.png></td><td></td></tr><tr>';}
+        elseif ($ii == 30) {echo '</tr><tr><td colspan=2></td><td colspan=5 align=center><img width=100% heigth=100% src=themes/branches_asc1.png></td><td colspan=2></td></tr><tr>';}
+        elseif ($ii == 40 and $nb_desc != 0) {echo '</tr><tr><td colspan=3></td><td colspan=3 align=center><img width=100% heigth=100% src=themes/branches_desc.png></td><td colspan=3></td></tr><tr>';}
+        else {echo '</tr><tr>';}
+    }
+// fleches
+    elseif ($ii < 10)
+    {    echo '<td align=center>';
+        if ($ii % 2 == 0) 
+        {    if (array_search($grid[$ii],$ancetres["sosa_d"]) !== FALSE)
+            {    $jj = array_search($grid[$ii],$ancetres["sosa_d"]);
+                echo '<a href=arbre_mixte.php'.$url.'&id='.$ancetres["id_indi"][$jj].'><img width=35 src=themes/fleche_haut.png></a>';
+            }
+        }
+        echo '</td>';
+    }
+// ascendants
+    elseif (($ii > 10  and $ii < 30 OR $ii == 35) AND $grid[$ii]) 
+    {   if ($grid[$ii] == 1) {$cell_indiv = "cell_indivP";} else {$cell_indiv = "cell_indiv";}
+        if (array_search($grid[$ii],$ancetres["sosa_d"]) !== FALSE)
+        {    echo '<td align=center class='.$cell_indiv.' OnMouseOver=afficher_bulle("'.$grid[$ii].'") OnMouseOut=desafficher_bulle("'.$grid[$ii].'")>';
+            $jj = array_search($grid[$ii],$ancetres["sosa_d"]);
+            if ($grid[$ii] == 1) {$central = "O";} else {$central = "N";}
+            afficher_cellule ($grid[$ii], $ancetres["id_indi"][$jj], $ancetres["sosa_dyn"][$jj], $ancetres["nom"][$jj], $ancetres["sexe"][$jj], $ancetres["profession"][$jj], $ancetres["date_naiss"][$jj], $ancetres["lieu_naiss"][$jj], $ancetres["date_deces"][$jj], $ancetres["lieu_deces"][$jj],$central);
+            echo '</td>';
+        } else 
+        {    echo '<td width=100 class='.$cell_indiv.'><br><br><br><br><br><br><br><br><br></td>';
+        }
+    }
+// fratrie
+    elseif ($ii > 30  and $ii < 40 AND $ii != 35 AND $grid[$ii]) 
+    {    
+        echo '<td align=center class=cell_indiv OnMouseOver=afficher_bulle("F'.$grid[$ii].'") OnMouseOut=desafficher_bulle("F'.$grid[$ii].'")>';
+        
+        $jj = $grid[$ii] - 1;
+        afficher_cellule ('F'.$grid[$ii]
+		,$ancetres_fs["id_fs"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["sosa_dyn"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["nom"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["sexe"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["profession"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["date_naiss"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["lieu_naiss"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["date_deces"][$_REQUEST['id']][$jj]
+		,$ancetres_fs["lieu_deces"][$_REQUEST['id']][$jj]
+		);
+        echo '</td>';
+    }
+// descendants
+    elseif ($ii > 40  and $ii < 50 AND $grid[$ii]) 
+    {    echo '<td align=center class=cell_indiv OnMouseOver=afficher_bulle("D'.$grid[$ii].'") OnMouseOut=desafficher_bulle("D'.$grid[$ii].'")>';
+        
+        $jj = $grid[$ii];
+        afficher_cellule ('D'.$grid[$ii], $descendants["id_indi"][$jj], $descendants["sosa_d"][$jj], $descendants["nom"][$jj], $descendants["sexe"][$jj], $descendants["profession"][$jj], $descendants["date_naiss"][$jj], $descendants["lieu_naiss"][$jj], $descendants["date_deces"][$jj], $descendants["lieu_deces"][$jj]);
+
+        echo '</td>';
+    }
+// fleches
+    elseif ($ii > 50 AND $ii < 60)
+    {    echo '<td align=center>';
+        $indice_desc = $ii - 10; // on récupère la présence des descendants
+        $jj = $grid[$indice_desc];
+
+        if ($jj) {echo '<a href=arbre_mixte.php'.$url.'&id='.$descendants["id_indi"][$jj].'><img width=35 src=themes/fleche_bas.png></a>';}
+        echo '</td>';
+    }
+// cases vides
+    else 
+    {echo '<td style="padding:0px;"></td>';}
+}
+echo '</tr></table>';
+
+// on ferme le masque général
+include ("_inc_html_card.php");

@@ -1,0 +1,311 @@
+/* GeneoTree Styles by Damien Poulain - 2024 */
+BODY
+{	font-family:  Arial, Helvetica, sans-serif;
+}
+
+A:LINK
+{	color:#0645ae;				/* couleur texte des liens */
+	text-decoration:none;		/* pas de surligne sur les liens */
+}
+A:VISITED
+{	color:#0b0080;
+}
+A 
+{  position: relative; 			/* positionne le span infobulle au début de texte*/
+}
+A span 
+{  display: none;				/* masque le span infobulle */
+}
+A:hover span 
+{  display    : inline;			/* On affiche l'infobulle. */
+   position   : absolute; top: 25px; left: 20px;  /* positionnement infobulle */
+   white-space: nowrap;			/* évite les retours à la ligne */
+   background : white;
+   font-weight: normal;
+   /*font-size  : 1.0em;*/
+   color      : black;
+   padding    : 3px;
+   border     : 1px solid grey;	/* bordure grise */
+   z-index    : 1;				/* premier plan */
+}
+
+button {
+    padding: 5px 20px;
+    margin: 10px;
+    cursor: pointer;
+	border-style:outset;
+	border-color:silver;}
+
+DIV
+{	border        : 0px solid black;	/* pas de bordures par defaut. ajouter les bordures apres */ 
+	padding       : 0px;				/* pas de padding par defaut On ajoute les paddings apr�s*/
+	margin        : -8px;               /* pour donner de l'air aux menus */
+	vertical-align: middle;             /* par defaut, alignement vertical haut. */
+	display       : inline;			    /* Les divs doivent pouvoir se positionner n importe ou */
+}
+
+FORM
+{	margin:0px;					/* supprime les marges exterieures de 3 par defaut */
+}
+IMG
+{	border:0px;
+}
+P
+{	margin:0px; 				/* supprime la marge exterieure de 3 par defaut */
+	padding:0px; 				/* supprime la marge interieure de 3 par defaut */
+}
+SPAN
+{	width         : 100%;
+	text-align    : center;   /* ne pas centrer la DIV diaporama */
+}
+
+TABLE
+{	border-collapse: collapse;  /* on fusionne les traits */
+	border-spacing: 0px;		/* 0 pixel entre les lignes et les colonnes */
+}
+TD
+{	padding: 0px 3px 0px 3px;	/* marge intérieure : 0 vertical, un peu horizontal */
+	border: 0px solid black;	/* pas de bordures par defaut. */ 
+	vertical-align: middle;
+}
+TH
+{	cursor: pointer;
+	position: relative;
+}
+.bords_verti
+{	border-left: 1px solid black;
+	border-right: 1px solid black;
+}
+.bord_bas
+{	border-bottom: 1px solid black;
+}
+.bord_haut
+{	border-top: 1px solid black;
+}
+.bulle  /* tooltips on maps */
+{	background:#A0A0A0;
+	padding:4px;
+	text-align:left;			/* texte bulle aligne a gauche */
+	border:2px solid black; 	/* double trait pour la bulle */
+}
+.cell_indiv, .cell_indivP
+{	background-color:#D7EAF7;
+	border: 1px solid black;
+	border-radius: 10px;		/* bords arrondis, /!\ incompatible avec collapse */
+	vertical-align:top;
+}
+.cell_indivP
+{	font-size:1.3em;
+}
+.defilement  /* pour animer les messages d'erreur à l'installation */
+{ animation: marqueelike 30s infinite linear;
+  display:inline-block;
+}
+@keyframes marqueelike
+{	0%, 100% {margin-left:0;}
+ 	50% {margin-left:25%;}
+}
+.dom
+{	font-family:Helvetica;
+}
+.ligne_tr1
+{	background-color:#FFFFFF;
+	color:#000000;
+}
+.ligne_tr2
+{	background-color:#D7EAF7;
+	background:#D7EAF7;
+	color:#000000;
+}
+#map 
+{
+    width: 450px;
+    height: 600px;
+}
+.menu .categorie ul 
+{	display: none;		/* cache les ul quand pas survoles */
+	position: absolute; /* permet de positionner l'ensemble en haut */
+	padding: 0;			/* ajuste les ul au h3 */
+	margin: 0;
+	list-style: none;   /* supprimer les puces */
+	z-index: 1;
+	width:270px;
+}
+.menu:hover ul 
+{	display: block;		/* affiche les ul au survol */
+}
+.menu a		/* decoration generale de l'ensemble, hors survol equivalent menu_td*/
+{	display:block;		/* evite la superposition des lignes */
+	text-decoration:none;
+	text-align:left;
+	font-weight:bold;
+	background-color:white;
+	margin:-3px;
+	padding:5px;
+	border-width:2px;
+	border-style:outset;
+	border-color:silver;
+}
+.menu a:hover 
+{	color: black;
+	background-color: #D7EAF7;
+}
+.menu_td, .menu_encours/*, INPUT*/
+{	text-decoration:none;
+	text-align:center;
+	font-weight:bold;
+	background-color:white;
+	margin:0px 0px 0px 0px;
+	padding:5px;
+	border-width:2px;
+	border-style:outset;
+	border-color:silver;
+}
+.menu_encours
+{	background-color:#D7EAF7;
+	font-size:1.3em;
+}
+.menu_td:link, .menu_td:visited, .menu_encours:link, .menu_encours:visited
+{	text-decoration:none;
+	color:black;				/* surcharge sur la balise a */
+}
+.save-button 
+{	background-image: url("themes/save.png");
+	background-repeat: no-repeat;
+	background-size: cover;
+	width: 20px;
+	height: 20px;
+	border: none;
+    cursor: pointer;
+}
+.sort-indicator 
+{	position: relative;
+	right: 0px;
+	color: red;
+}
+.titre
+{	font-size: 1.3em;
+	font-weight: bold;
+	text-align:center;
+	padding:0px; 
+	width: 100%
+}
+.titre_col
+{	border: 1px solid black;
+	font-weight:bold;
+	text-align:center;
+}
+.trait_arbre_verti /* consang */
+{	border-left: 4px solid black;
+	z-index: -1;
+}
+.trait_arbre_horiz /* consang */
+{	border-top: 4px solid black;
+	z-index: -1;
+}
+.zoneclic
+{	display:block;
+	width:100%;
+	height:100%;
+	text-decoration:none;
+	color:black;
+}
+
+/***************** Styles pour la fenêtre modale *****************/
+
+/* Styles de base pour la modale */
+.modal 
+{   display: none; /* Masquée par défaut */
+    position: relative;
+    z-index: 1000;
+    width: 300px;
+    height: 80px;
+    border: 1px solid black;
+	text-align : center;
+	padding: 10px;
+	margin : 10px;
+}
+
+/* Styles pour garder la page derrière inactive */
+.modal-open 
+{  overflow: hidden;
+}
+
+/**************** Search input ***********/
+
+/* Style du conteneur de l'input */
+.input-container 
+{ position: relative;
+  display: inline-block;
+}
+
+/* Style du champ input */
+.input-container input[type="text"] 
+{ margin-left:10px;
+  font-size:1.2em;
+  font-weight:normal;
+}
+
+/* Afficher la croix seulement lorsque l'input a du texte */
+.input-container input:not(:placeholder-shown) + .clear-button 
+{ display: inline; /* Afficher lorsque du texte est présent */
+}
+
+/* Style du bouton de suppression (croix) */
+.clear-button 
+{ position: absolute;
+  right: -25px;
+  transform: translateY(-40%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 30px;
+  display: none; /* Cacher par défaut */
+}
+
+/************* Date Slider styles  **********************/
+
+/* Labels */
+.range-label
+{	position: absolute;
+	top: -5px; /* Position au-dessous de la barre */
+	font-size: 1.2em;
+	text-align:left;
+}
+/* input de base */
+input[type="range"] 
+{	position: absolute;
+	-webkit-appearance: none; /* indispensable  pour la suite dessous */
+	background: #DDDDDD; /* Set the track color */
+	height: 3px;
+	width: 100%;
+	pointer-events: none;
+}
+/* Track */
+input[type="range"]::-webkit-slider-runnable-track 
+{	height: 100%;  /* épaisseur de la barre */
+}
+
+/* cursors */
+input[type="range"]::-webkit-slider-thumb 
+{	pointer-events: auto;
+	/* cursor: pointer; */
+	-webkit-appearance: none;
+	margin-top: -10px;
+	background: #666;
+	height: 25px;
+	width: 10px;
+}
+
+/* Firefox cursors */
+input[type="range"]::-moz-range-thumb 
+{	pointer-events: auto;
+	/* cursor: pointer; */
+	appearance: none;
+	margin-top: -10px;
+	background: black;
+	height: 25px;
+	width: 10px;
+}
+
+

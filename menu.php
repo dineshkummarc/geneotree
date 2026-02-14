@@ -1,225 +1,353 @@
 <?php
 header('Content-type: text/html; charset=utf-8'); 
-//header('Content-type: text/html; charset=ISO-8859'); 
-// menu.php est l'entete de toutes les pages GeneoTree après le choix du gedcom dans la page index.php
-// menu.php gère le mot de passe ami, l'affichage des préférences utilisateurs : langue, theme, intervalle, taille des listes.
-// menu.php appelle _sql.inc.php et les fichiers de langue pour toutes pages, hors pdf et admin
-require_once  ("_sql.inc.php");
-require_once ("_boites.inc.php");
-require_once ("_caracteres.inc.php");
+
+require_once ("_functions.php");
 include ("config.php");
 
 /*********************************DEBUT DU SCRIPT *************************/
+// menu.php est l'entete de toutes les pages GeneoTree après le choix du gedcom dans la page index.php
+// menu.php gère le mot de passe ami, l'affichage des préférences utilisateurs : langue, theme.
+// menu.php appelle _sql.inc.php et les fichiers de langue pour toutes pages, hors pdf et admin
+
+// POST variables initialization
+              // generic
+if (!isset($_GET['pag']))         {$_GET['pag']       = "no";}
+if (!isset($_REQUEST['sex']))     {$_REQUEST['sex']   = "_";}
+if (!isset($_REQUEST['sosa']))    {$_REQUEST['sosa']  = 0;}
+if (!isset($_REQUEST['rech']))    {$_REQUEST['rech']  = "";}
+              //form pdf filters
+if (!isset($_REQUEST['implex']))  {$_REQUEST['implex']= "_";}
+if (!isset($_REQUEST['type']))    {$_REQUEST['type']  = "";}
+if (!isset($_REQUEST['nbgen']))   {$_REQUEST['nbgen'] = 4;}
+if (!isset($_REQUEST['orient']))  {$_REQUEST['orient']= "";}
+if (!isset($_REQUEST['SpeGe']))   {$_REQUEST['SpeGe'] = "";}
+if (!isset($_REQUEST['pori']))    {$_REQUEST['pori']  = "";}
+
+if (!isset($_REQUEST['ext']))     {$_REQUEST['ext']   = "";}
+if (!isset($_REQUEST['gedlang'])) {$_REQUEST['gedlang']  = "";}
+if (!isset($_REQUEST['gedlangForm'])){$_REQUEST['gedlangForm']  = "";}
+if (!isset($_REQUEST['time']))    {$_REQUEST['time']  = "";}
+
+                // date slider
+if (empty($minValue)) {$minValue = "";}
+if (empty($maxValue)) {$maxValue = "";}
 
 $pool = sql_connect();
-if (!Serveurlocal())
-{	if(@$_POST["pass"] == $passe_ami and $passe_ami !== "") 
-	{	
-//		setcookie("passeami",crypt($passe_ami,"dam")); // crypt - non facile de deviner
-		setcookie("passeami",$passe_ami);
-		Header("Location: ".$_SERVER["PHP_SELF"]."?ibase=".$_REQUEST['ibase']);
-	}
 
-//	$isOK = (strcmp(@$_COOKIE["passeami"], crypt($passe_ami,"dam")) == 0);
-	$isOK = (strcmp(@$_COOKIE["passeami"], $passe_ami) == 0);
-	if(!$isOK) 
-	{	echo $got_lang['Frie1'];
-		echo '<form name=mdp method="post">';
-		echo '<table><tr>';
-		echo '<td><input type="password" name="pass"></td>';
-		echo '<td><input type="Submit" value="Entrer"></td>';
-		echo '</tr></table>';
-		echo '</form>';
-	
-			// positionnement du focus sur le formulaire
-		echo '<script language="JavaScript" type="text/javascript">
-		document.mdp.pass.focus();
-			</script>';	
-		exit;
-	}
+// $query = 'SELECT password,sosa_principal,consang,media,source,nb_noms,nb_lieux,nb_dept,nb_prenoms,volume FROM '.$sql_pref.'__base WHERE base = "'.$_REQUEST['ibase'].'"';
+$query = 'SELECT * FROM '.$sql_pref.'__base WHERE base = "'.$_REQUEST['ibase'].'"';
+$result = sql_exec($query);
+$row = mysqli_fetch_assoc($result);
+
+if (!Serveurlocal() and (($passe_ami and $_COOKIE ["passeami"] != $passe_ami) or ($row["password"] and $_COOKIE ["passebase"] != $row["password"])))
+{    if (!$_POST["pass"] or ($passe_ami and $_POST["pass"] != $passe_ami) or ($row["password"] and $_POST["pass"] != $row["password"])) 
+    {   require ("languages/".$_REQUEST['lang'].".php");
+        echo $got_lang['Frie1'];
+        echo '<form name=mdp method="post">';
+        echo '<table><tr>';
+        echo '<td><input type="password" name="pass"></td>';
+        echo '<td><input type="Submit" value="Entrer"></td>';
+        echo '</tr></table>';
+        echo '</form>';
+
+            // positionnement du focus sur le formulaire
+        echo '<script language="JavaScript" type="text/javascript">
+        document.mdp.pass.focus();
+            </script>';    
+        exit;
+    }
+    elseif ($passe_ami and @$_POST["pass"] == $passe_ami) // on teste d'abord le mot de passe ami general 
+    {    // setcookie("passeami",crypt($passe_ami,"dam")); // crypt - non facile de deviner
+        setcookie("passeami",$passe_ami);
+        Header("Location: ".$_SERVER["PHP_SELF"]."?ibase=".$_REQUEST['ibase']."&lang=".$_REQUEST['lang']);
+    }
+    elseif ($row["password"] and @$_POST["pass"] == $row["password"])   // sinon on teste le mot de passe particulier à une base
+    {    setcookie("passebase",$row["password"]);
+        Header("Location: ".$_SERVER["PHP_SELF"]."?ibase=".$_REQUEST['ibase']."&lang=".$_REQUEST['lang']);
+    }
+    else {echo 'FATAL ERROR : Cookie or password are not detect correctly. Contact your administrator';}
 }
-$ADDRC = str_replace(array('.',':'),'',getenv("REMOTE_ADDR"));
 
 /*********************** DEBUT GESTION DES PREFERENCES utilisateur ******************/
 
-/*  Principe :
-		Il existe des préférences par défaut pour chaque base (table got_base), gérées par l'administrateur qui peut vouloir qu'une base aient des palmares de 30, theme wood.
-    L'utilisateur les modifier et garder ses préférences (table got__pref).
-*/
+// On stocke en permanence les préférences des utilisateurs dans les cookies, pour lui réafficher à la prochaine ouverture du navigateur.
 
 global $pool;
-			// creation g__pref la premiere fois
-$query = "CREATE TABLE g__pref
-	(	 addr  varchar(20) NOT NULL
-		,base  varchar(255) NOT NULL
-		,cujus int
-		,forma varchar(6)
-		,inter varchar(4)
-		,lang  varchar(2)
-		,palma varchar(4)
-		,theme varchar(16)
-		,pref1 varchar(8)
-		,pref2 varchar(8)
-		,pref3 varchar(8)
-		,pref4 varchar(8)
-		,pref5 varchar(8)
-		,pref6 varchar(8)
-		,pref7 varchar(8)
-		,pref8 varchar(8)
-		,pref9 varchar(8)
-		,PRIMARY KEY ADDR_PK (addr,base)
-	) ".$collate;
-sql_exec($query,2);
 
-			// on recupere systematiquement toutes les preferences utilisateurs
-$query = 'SELECT * FROM g__pref WHERE addr = "'.$ADDRC.'" and base ="'.$_REQUEST['ibase'].'"';
-$result = sql_exec($query,2);
-$row = @mysqli_fetch_row($result);
+// alimentation des POSTs vides
+$Centra = urlencode($_REQUEST['ibase'])."_centra";
+if (!isset($_REQUEST['id']) OR $_REQUEST['id'] == "")    {$_REQUEST['id'] = $row["id_decujus"];}
+// if (!isset($_REQUEST['lang']))        {if (isset($_COOKIE["lang"])) {$_REQUEST['lang'] = $_COOKIE["lang"];} else {$_REQUEST['lang'] = "en";} }
+if (!isset($_REQUEST['palma']))        {if (isset($_COOKIE["palma"])) {$_REQUEST['palma'] = $_COOKIE["palma"];} else {$_REQUEST['palma'] = "30";} }
+if (!isset($_REQUEST['theme']))        {if (isset($_COOKIE["theme"])) {$_REQUEST['theme'] = $_COOKIE["theme"];} else {$_REQUEST['theme'] = "wiki";} }
 
-/* si variable POST vides
-      si Variables Base existantes : on renseigne les variables POST avec les variables basesa base 
-		  si Variables Base inexistantes ((1er accès de l'IP sur la base) : on renseigne avec la base et les POSTs avec les defauts 
-*/
+// stockage des POSTs dans les cookies
+$ExpireCookie = time()+60*60*24*30;  // validité 1 mois
+setcookie($Centra,$_REQUEST['id'],$ExpireCookie);
+// setcookie("lang",$_REQUEST['lang'],$ExpireCookie);
+setcookie("palma",$_REQUEST['palma'],$ExpireCookie);
+setcookie("theme",$_REQUEST['theme'],$ExpireCookie);
 
-if ( !isset($_REQUEST['fid']) )
-{	if ( isset($row[0]) ) 	
-	{	$_REQUEST['fid']      = $row[2];
-		$_REQUEST['forma']      = $row[3];	
-		$_REQUEST['intervalle'] = $row[4];
-		$_REQUEST['lang']       = $row[5];
-		$_REQUEST['palma']      = $row[6];
-		$_REQUEST['theme']      = $row[7];
-	} else // 1er acces de l'IP au menu
-	{ // on recupere les defauts geres par l'administrateur
-		
-		$query = "SELECT * FROM g__base WHERE base = '".$_REQUEST['ibase']."'";
-		$result = sql_exec($query);
-		$row = mysqli_fetch_row($result);
-		
-		$_REQUEST['fid'] = $row[1];
-		$_REQUEST['forma'] = $row[11];
-		$_REQUEST['intervalle'] = $row[10];
-		$_REQUEST['lang'] = $row[7];
-		$_REQUEST['palma'] = $row[9];
-		$_REQUEST['theme'] = $row[8];
-		$query = 'INSERT INTO g__pref value ("'.$ADDRC.'","'.$_REQUEST['ibase'].'","'.$row[1].'","'.$row[11].'","'.$row[10].'","'.$row[7].'","'.$row[9].'","'.$row[8].'","'.substr($_SERVER['HTTP_ACCEPT_LANGUAGE'],0,2).'","'.date("Ymd",time()).'",NULL,NULL,NULL,NULL,NULL,NULL,NULL)';
-		sql_exec($query,0);
-	}
-} 
-// si Variables POST existantes et différentes des variables Bases, on stocke la nouvelle variable POST en base de données
-if ( $_REQUEST['fid'] !=  $row[2] or $_REQUEST['forma'] !=  $row[3] or $_REQUEST['intervalle'] !=  $row[4] or $_REQUEST['lang'] !=  $row[5] or $_REQUEST['palma'] !=  $row[6] or $_REQUEST['theme'] !=  $row[7] ) 
-{	$query = 'UPDATE g__pref SET cujus="'.$_REQUEST['fid'].'",forma="'.$_REQUEST['forma'].'",inter="'.$_REQUEST['intervalle'].'",lang="'.$_REQUEST['lang'].'",palma="'.$_REQUEST['palma'].'",theme="'.$_REQUEST['theme'].'" ,pref1="'.substr($_SERVER['HTTP_ACCEPT_LANGUAGE'],0,2).'",pref2="'.date("Ymd",time()).'"
-	WHERE addr = "'.$ADDRC.'" and base ="'.$_REQUEST['ibase'].'"'; 
-	sql_exec($query,0);
+// call language file (POST variable is initialized)
+if (!isset($_REQUEST['lang']))
+{ if (mb_substr($_SERVER['HTTP_ACCEPT_LANGUAGE'],0,2) == 'fr')
+  {    $_REQUEST['lang'] = "fr";
+  }    else 
+  {    $_REQUEST['lang'] = 'en';
+  }
 }
+require ("languages/".$_REQUEST['lang'].".php");
 
-// on peut appeller le fichier de langue, la variable POST lang est forcement remplie
-require_once ("languages/lang.".$_REQUEST['lang'].".inc.php");	
-
-/*********** FIN GESTION DES PREFERENCES ************************/
-
-if (!isset($_REQUEST['id'])) {$_REQUEST['id'] = $_REQUEST['fid'];}
 if (!isset($_REQUEST['fid'])) {$_REQUEST['fid'] = $_REQUEST['id'];}
 if (!isset($_REQUEST['ifin'])) {$_REQUEST['ifin'] = "";}
-if (!isset($_REQUEST['csg'])) 
-{	$query = "SELECT consang FROM g__base WHERE base = '".$_REQUEST['ibase']."'";
-	$result = sql_exec($query);
-	$row = mysqli_fetch_row($result);
-	$_REQUEST['csg'] = $row[0];
+if (!isset($_REQUEST['pag']))
+{   if (in_array(substr($page,0,4),array("list","stat"))) { $_REQUEST['pag'] = "no";}
+    elseif (in_array(substr($page,0,4),array("even","sour","medi"))) { $_REQUEST['pag'] = "BIRT";}
+    elseif ($page == "arbre_ascendant.php") { $_REQUEST['pag'] = "Age";}
+    elseif (in_array(substr($page,0,4),array("arbr","cons"))) { $_REQUEST['pag'] = "";}
+    else {echo "probleme pag";}
 }
+if (!isset($_REQUEST['csg']))  {$_REQUEST['csg'] = $row["consang"];}
 
 $url = url_request();
 
-			// debut de l'affichage
-if ($_REQUEST['ifin'] !== "ge")
-{	echo '<!DOCTYPE html>';
-	echo "<HTML>";
-	echo "<HEAD>";  
-  echo '<META http-equiv="Content-type" content="text/html; charset=utf-8" name="author" content="Damien Poulain">'; //l'index est caractere latin car geneotree n'a que 3 langues pour l'instant. Les 3 sont latines.
-//  echo '<META http-equiv="Content-type" content="text/html; charset=iso-8859-1" name="author" content="Damien Poulain">'; //l'index est caractere latin car geneotree n'a que 3 langues pour l'instant. Les 3 sont latines.
-	echo "<TITLE>GeneoTree v".$got_lang['Relea']."</TITLE>";
-	echo "<LINK rel='stylesheet' href='themes/".$_REQUEST['theme'].".css' type='text/css'>";
-	echo '<link rel="shortcut icon" href="themes/geneotre.ico">';
-
+/*********************** START DISPLAY ********************************/
 ?>
-<SCRIPT language="javascript">
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META charset="UTF-8">
+<META http-equiv="Content-type" content="text/html; charset=utf-8" name="author" content="Damien Poulain">
+<META name="viewport" content="width=device-width,height=device-height,initial-scale=0.6"/>
+<TITLE>GeneoTree v<?php echo $GeneoTreeRelease?></TITLE>
 
-	function afficher_bulle(id)
-	{	document.getElementById(id).style.visibility="visible";
-	}
+<LINK rel="stylesheet" href="geneotree.css" type="text/css">
+<LINK rel="stylesheet" href="themes/<?php echo $_REQUEST["theme"]?>.css" type="text/css">
+<link rel="icon" href="themes/geneotree.ico?v=2" type="image/x-icon">
 
-	function desafficher_bulle(id)
-	{	document.getElementById(id).style.visibility="hidden";
-	}
+<!-- Leaflet OpenStreetMap -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.fullscreen@1.6.0/Control.FullScreen.js"></script>
+<script src="chartjs/Chart.min.js"></script>
+<script src="chartjs/chartjs-plugin-datalabels.min.js"></script>
 
-	function afficher_fiche(idelement)
-	{	var y = document.getElementById(idelement).offsetTop - 0;
-		var scroll_y = document.body.scrollTop || document.documentElement.scrollTop;
-		var yy = window.innerHeight || document.body.clientHeight;
-		var fid = idelement.substring(3);
-		var ftop = Math.round(y / yy) * yy + (scroll_y % yy) - yy + 8;
-		if (ftop < 0) {ftop = 8;}
-		window.location.replace("<?php echo basename($_SERVER["PHP_SELF"]).$url?>&fid=" + fid + "&ftop=" + ftop  + "&scrolly=" + scroll_y);
-		return;
-	}
-
-  function PopupPic(sPicURL, largeur, hauteur) 
-  {	largeur = largeur + 200;
-  	hauteur = hauteur + 200;
-  	window.open( "popup.php?pict="+sPicURL, "", "resizable=non, Width="+largeur+", Height="+hauteur+"  "); 
-  } 
-
-</script> 
+<script>
+// php variables
+var ADDRC        = "<?php echo $ADDRC;?>";
+var Annee        = "<?php echo $got_lang["Annee"];?>";
+var browserLanguage = "<?php echo $browserLanguage;?>";
+var hide75       = "<?php echo $hide75;?>"; 
+var csg          = "<?php echo $_REQUEST['csg'];?>";
+var getPag       = "<?php echo $_GET['pag']; ?>";
+var gotLang      = <?php echo json_encode($got_lang);?>; 
+var gotTag       = <?php echo json_encode($got_tag);?>;
+var HrefBase     = '&ibase=<?php echo urlencode($_REQUEST["ibase"]);?>&lang=<?php echo $_REQUEST["lang"]?>&pag=<?php echo $_REQUEST["pag"]?>&sex=<?php echo $_REQUEST["sex"]?>&sosa=<?php echo $_REQUEST["sosa"]?>&rech=<?php echo urlencode($_REQUEST["rech"]);?>&id=<?php echo $_REQUEST["id"]?>';
+var ibase        = "<?php echo $_GET['ibase'];?>";
+var ii           = 0;
+var MarrTags     = <?php echo json_encode ($MarrTags);?>;
+var pag          = "<?php echo $_GET['pag'];?>"
+var PagePhp      = "<?php echo $page?>";
+var Rech         = "<?php if (isset($_REQUEST['rech'])) {echo $_REQUEST['rech'];} else {echo '';} ?>";
+var ServeurLocal = "<?php echo Serveurlocal(); ?>";
+var Sex          = "<?php if (isset($_REQUEST['sex']))  {echo $_REQUEST['sex'];} else {echo '_';} ?>";
+var sql_pref     = "<?php echo $sql_pref;?>"; 
+var Sosa         = "<?php if (isset($_REQUEST['sosa'])) {echo $_REQUEST['sosa'];} else {echo '0';} ?>";
+var today        = <?php echo json_encode($today);?>;
+var flagMaps     = <?php echo $row["maps"];?>
+</script>
+<script src="script.min.js"></script>
 
 <?php
-	echo "</HEAD>";
-	echo "<BODY>";
-	echo '<table>';					// grand cadre
-	echo '<tr>';
-	echo '    <td class=trait_double colspan=4 width=920px>';
+/*
+|-----------------------------------------|
+| Header : home, base, languages, themes  |
+|-----------------------------------------|
+| Main menu : tree,list,stat,event,media  |
+|-----------------------------------------|
+| DivIcon1 DivIcon2 DivIcon2 DivSubMenu   |
+|-----------------------------------------|
+| DivSex  DivSosa  DivSearch DivDateSlider|
+|-----------------------------------------|
+| TabMain  | TabDetail| DivCard           |
+|          |          | TabParents        |
+|          |          | TabSpouse         |
+|          |          | TabChildren       |
+|          |          | TabSiblings       |
+|          |          | TabGrandChildren  |
+|          |          | TabUncles         |
+|          |          | TabNephews        |
+|          |          | TabFirstCousins   |
+|          |          | TabSecondCousins  |
+|          |          | TabDistantCousins |
+|          |          | TabGreatUncles    |
+|          |          | DivSource1        |
+|          |          | DivSource2        |
+|          |          | Div [...]         |
+|          |          | DivSourceN        |
+|-----------------------------------------|
+*/
 
-	echo '<table><tr>';				//cadre superieur haut
-	echo '<td width=20><a href = index.php?lang='.$_REQUEST["lang"].' title="'.$got_lang['IBHom'].'"><img border=0  width=35 height=35 src="themes/icon-home.png"></a></td>';
-	if ($_REQUEST['ibase'] != '$club') 
-	{	echo '<td class=titre width=480><b>Base '.ucfirst($_REQUEST['ibase']).'</b></td>';
-	}	else 
-	{	echo '<td class=titre width=480><b>Base '.mb_substr(ucfirst($_REQUEST['ibase']),1).'</b></td>';
-		}
-	/**************************** ADD LANGUAGE HERE *****************************/
-	echo '<td align=right width=185 valign="middle"><b>'.$got_tag["LANG"].' </b>';
-	echo '<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&lang=en" title="'.$got_lang['IBEn'].'"><img border="0" src="themes/en.gif" border="0" width="25" height="16"></a>';
-	echo '&nbsp;<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&lang=fr" title="'.$got_lang['IBFr'].'"><img border="0" src="themes/fr.gif" border="0" width="25" height="16"></a>';
-	echo '&nbsp;<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&lang=hu" title="'.$got_lang['IBHu'].'"><img border="0" src="themes/hu.gif" border="0" width="25" height="16"></a>';
-	echo '&nbsp;<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&lang=it" title="'.$got_lang['IBIt'].'"><img border="0" src="themes/it.gif" border="0" width="25" height="16"></a>';
-	echo '</td>';
-	/**************************** END LANGUAGE AREA ****************************/
+echo '
+</HEAD>
+<BODY>
+<table name=structure style="margin-left:auto; margin-right:auto; border: 2px solid black;">
+<tr>
+  <td>
+    <a href = index.php?lang='.$_REQUEST["lang"].'><img width=35 height=35 src="themes/icon-home.png"></a>';
 
-	/**************************** ADD THEME HERE *****************************/
-	echo '<td width=215 align=right>&nbsp;<b>Theme </b>';
-	echo '<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&theme=wikipedia"><img border="0" src="themes/wiki.png" border="0" width="25" height="16"></a>';
-	echo '&nbsp;<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&theme=wood"><img border="0" src="themes/wood.png" border="0" width="25" height="16"></a>';
-	echo '&nbsp;<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&theme=aqua"><img border="0" src="themes/aqua.png" border="0" width="25" height="16"></a>';
-	echo '&nbsp;<a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["PHP_SELF"].$url.'&theme=ivory"><img border="0" src="themes/ivory.png" border="0" width="25" height="16"></a>';
-	echo '</td>';
-	/**************************** END THEME AREA *****************************/
-	
-	
-	echo '</tr>';
-	echo '<form method=post>';
+// base
+echo '
+    &emsp;&emsp;&emsp;&emsp;
+    <span style="font-size:2em;">'.$got_lang['Bases'].' <b>'.ucfirst($_REQUEST['ibase']).'</b></span>
+    <span style="font-size:em;font-size:small;">'.$row["nb_indi"].' '.$got_tag["INDI"].'s</span>';
 
-	echo '<tr>';
-	echo '<td colspan=3 align=left height=17>';
-	echo '<a class=menu_td href = arbre_ascendant.php'.$url.' title="'.$got_lang['IBArb'].'">'.$got_lang['MenAr'].'</a>&nbsp;';
-	echo '<a class=menu_td href = listes.php'.$url.' title="'.$got_lang['IBLis'].'">'.$got_lang['MenLi'].'</a>&nbsp;';
-	echo '<a class=menu_td href = graphes.php'.$url.' title="'.$got_lang['IBGra'].'">'.$got_lang['MenGr'].'</a>&nbsp;';
-	echo '<a class=menu_td href = stat.php'.$url.' title="'.$got_lang['IBSta'].'">'.$got_lang['PalNo'].'</a>&nbsp;';
-	echo '<a class=menu_td href = source.php'.$url.' title="'.$got_lang['IBSou'].'">'.$got_lang['Sourc'].'</a>&nbsp;';
-	echo '<a class=menu_td href = media.php'.$url.' title="'.$got_lang['IBMed'].'">'.$got_lang['Media'].'</a>';
-	echo '</td><td align=right valign=top><b>'.$got_lang["Forma"].'</b>';
-	afficher_radio_bouton("forma",array("A4","Letter"),array("A4","Letter"),$_REQUEST['forma']);
-	echo '</form>';
-	echo '</td></tr></table>';
-	echo '		</td>';
-	echo '</tr></table>';  
+include ("_inc_lang_theme.php");
+
+if (Serveurlocal())
+{ echo '<div id="Resolution" style="font-size:small;"></div>';
+  ?>
+  <script>
+
+  function displayWindowSize()
+  {   var w = window.innerWidth;
+  	var h = window.innerHeight;
+  	document.getElementById("Resolution").innerHTML = "&emsp;&emsp;&emsp;&emsp;" + browserLanguage + "&ensp;" + w + "x" + h;
+  }
+
+  // On associe la fonction displayWindowSize à l évènement resize
+  window.addEventListener("resize", displayWindowSize);
+  // Appel pour le 1er affichage
+  displayWindowSize();
+
+  </script>
+  <?php
 }
-?>
+
+echo '</td></tr>'; // End TR1
+
+// sub menus
+switch (substr($page,0,4))
+{   case 'arbr' : $Class1="menu_encours"; $Class2="menu_td"; $Class3="menu_td"; $Class4="menu_td"; $Class5="menu_td"; $Class6="menu_td"; $Class7="menu_td";break;
+    case 'list' : $Class1="menu_td"; $Class4="menu_td"; $Class5="menu_td"; $Class6="menu_td"; $Class7="menu_td";
+            if (@$_REQUEST["pag"] == "lieu_evene") {$Class2="menu_td"; $Class3="menu_encours";} else {$Class2="menu_encours"; $Class3="menu_td";}
+            break;
+    case 'even' : $Class1="menu_td"; $Class2="menu_td"; $Class3="menu_td"; $Class4="menu_encours"; $Class5="menu_td"; $Class6="menu_td"; $Class7="menu_td";break;
+    case 'stat' : $Class1="menu_td"; $Class2="menu_td"; $Class3="menu_td"; $Class4="menu_td"; $Class5="menu_encours"; $Class6="menu_td"; $Class7="menu_td";break;
+    case 'sour' : $Class1="menu_td"; $Class2="menu_td"; $Class3="menu_td"; $Class4="menu_td"; $Class5="menu_td"; $Class6="menu_encours"; $Class7="menu_td";break;
+    case 'medi' : $Class1="menu_td"; $Class2="menu_td"; $Class3="menu_td"; $Class4="menu_td"; $Class5="menu_td"; $Class6="menu_td"; $Class7="menu_encours";break;
+    default : $Class1="menu_td"; $Class2="menu_td"; $Class3="menu_td"; $Class4="menu_td"; $Class5="menu_td"; $Class6="menu_td"; $Class7="menu_td";break;
+}
+
+echo '
+<tr>
+<td colspan=3 height=40px>
+';
+// fenêtre dynamique de navigation appellée sur le premier menu "arbre".
+echo '
+<table style="margin-bottom:8px;">
+<tr><td></td>
+<td>
+    <nav class="menu">
+        <section class="categorie">
+            <a href=arbre_ascendant.php'.$url.'&id='.$row["id_decujus"].'&fid='.$_REQUEST['fid'].'>'.$got_lang['MenAr'].'</a>
+            <ul>
+                <li><a href=arbre_mixte.php'.$url.'&id='.$_REQUEST['id'].'&fid='.$_REQUEST['fid'].'&theme='.$_REQUEST["theme"].'&palma='.$_REQUEST['palma'].'><img src=themes/fleche_milieu.png heigth=20 width=20> '.$got_lang['ArMix'].'</a></li>
+                <li><a href=arbre_ascendant.php'.$url.'&id='.$_REQUEST['id'].'&fid='.$_REQUEST['fid'].'><img src=themes/fleche_haut.png heigth=20 width=20> '.$got_lang['ArAsc'].'</a></li>
+                <li><a href=arbre_descendant.php'.$url.'&id='.$_REQUEST['id'].'&fid='.$_REQUEST['fid'].'&theme='.$_REQUEST["theme"].'&palma='.$_REQUEST['palma'].'><img src=themes/fleche_bas.png heigth=20 width=20> '.$got_lang['ArDes'].'</a></li>';
+                if ($_REQUEST['csg'] == 'O')
+                {    echo '<li><a href=arbre_consanguinite.php'.$url.'&id='.$_REQUEST['id'].'&fid='.$_REQUEST['fid'].'&theme='.$_REQUEST["theme"].'&palma='.$_REQUEST['palma'].'><img src=themes/fleche_consang.png heigth=20 width=20> '.$got_lang['EtCon'].'</a></li>';
+                }
+echo '
+            </ul>
+        </section>
+    </nav>
+</td>
+<td>&emsp;<a class='.$Class2.' href = listes.php'.$url.'&pag=nom>'.$got_lang['Noms'].'</a></td>
+<td>&emsp;<a class='.$Class3.' href = listes.php'.$url.'&pag=lieu_evene>'.$got_lang['Lieux'].'</a></td>
+<td>&emsp;<a class='.$Class5.' href = stat.php'.$url.'&pag=lon>'.$got_lang['PalNo'].'</a></td>
+<td>&emsp;<a class='.$Class4.' href = evenement.php'.$url.'&pag=BIRT>'.$got_lang['Evene'].'</a></td>';
+if ($row["nb_media"] != 0) {echo '&emsp;
+    <td>&emsp;<a class='.$Class7.' href = media.php'.$url.'&pag=%>'.$got_lang['Media'].'</a></td>';}
+echo '
+</tr></table>
+
+</td></tr></table>'; // end TR1 & TR2
+
+echo '
+
+<table style="margin-left:auto; margin-right:auto;">
+<tr id=TR3>
+  <td style="min-width:600px; padding:10px;">
+    <div id=DivIcon1></div> 
+    &emsp;
+    <div id=DivIcon2></div>
+    &emsp;
+    <div id=DivIcon3></div>
+    &emsp;
+    <div id=DivIcon4></div>
+    &emsp;
+    <div id=DivSubMenu></div>
+  </td>
+</tr>
+</table>
+
+<table style="margin-left:auto; margin-right:auto;">
+<tr id=TR4 >
+  <td id=DivSex></td>
+  <td>&emsp;</td>
+  <td id=DivSosa></td>
+  <td>&emsp;</td>
+  <td id=DivSearch></td>
+  <td>&emsp;</td>
+';
+if (substr($page,0,5) !== "arbre" AND substr($page,0,5) !== "media" AND substr($page,0,13) !== "consanguinite")
+{  echo '<td id=DivDateSlider style="position: relative; width: 200px;">
+    <span id="minYearLabel" class="range-label"></span>
+    <span id="maxYearLabel" class="range-label"></span>
+    <input type="range" id="rangeMin" step="20" oninput="updateSlider()">
+    <input type="range" id="rangeMax" step="20" oninput="updateSlider()">
+  </td>
+  ';
+}
+echo '
+</tr>
+<table width=100%>
+<tr>
+  <td align=right  id="waitMessage" style="display:none; color: red;">
+  </td>
+</tr>
+</table>
+
+</table>
+
+<table style="margin-left:auto; margin-right:auto;">
+
+<tr id=TR5>
+';
+
+if (substr($page,0,5) !== "arbre" 
+AND substr($page,0,9) !== "fiche_pdf" 
+AND !(substr($page,0,4) == "stat" AND in_array($_REQUEST["pag"], array("nom","lieu_evene","dept_evene","region_evene","country_evene","prenom1"))  )
+   )
+{ echo '
+    <td style="vertical-align:top;">
+      <div id=DivTitleMain class=titre></div>
+      <table id="TabMain" class="bord_bas bord_haut">
+          <thead id="TabMain-header" class=titre_col></thead>
+          <tbody id="TabMain-body"></tbody>
+      </table></td>
+    <td style="vertical-align:top;">
+      <div id=DivTitleMain2 class=titre></div>
+      <table id="TabMain2" class="bord_bas bord_haut">
+          <thead id="TabMain2-header" class=titre_col></thead>
+          <tbody id="TabMain2-body"></tbody>
+      </table>';
+    include ("_inc_html_card.php");
+} else
+{  echo '<td style="vertical-align:top;">';
+   if (substr($page,0,4) == "stat" AND in_array($_REQUEST["pag"], array("nom","lieu_evene","dept_evene","region_evene","country_evene","prenom1"))  )
+   { echo '<canvas id=statCanvas width=900 height=450></canvas>';
+   }
+}

@@ -1,26 +1,20 @@
 <?php
 
-/******* PLEASE DON'T MODIFY THE FOLLOWING LINE - NE PAS MODIFIER LA LIGNE CI-DESSOUS SVP ********/
-
-$INSTALLATION_OK = TRUE;
-
-/*************************************************************************************************/
-
-
-/****************************** BEGIN INITIALIZATION CONNECTION PARAMETERS ***********************/
+$INSTALLATION_OK = FALSE;
 
 $sql_host = 'localhost';
 $sql_base = 'geneotree';
 $sql_user = 'root';
+$sql_pref = 'got';
 $sql_pass = '';
 
 $passe_admin = '';
 $passe_ami   = '';
-$flag_excel  = '';
+$flag_excel  = 'Yes';
+$flag_club   = '';
 
 $ftp_server  = '';
 $ftp_user    = '';
 $ftp_pass    = '';
 
-/******************************* END INITIALIZATION CONNECTION PARAMETERS ************************/
 ?>

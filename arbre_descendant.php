@@ -1,237 +1,121 @@
 <?php
-error_reporting(E_ALL & ~E_NOTICE);	// compliquÈ dans l'algo de dessin des traits
-require_once ("_recup_descendance.inc.php");
-require_once ("_boites.inc.php");
-require_once ("_caracteres.inc.php");
-//require_once ("languages/lang.".$_REQUEST['lang'].".inc.php");	
-
+require_once ("_get_descendancy.php");
+require_once ("_functions.php");
 
 /*************************************** RECUPERATION DES DONNEES *********************************************/
 
-//$titre_page = "GeneoTree v".$got_lang['Relea']." - ".$got_lang['ArDes'];
-require_once ("menu.php");
+// On ouvre le masque  g√©n√©ral
+include ("menu.php");
 
-		// alimentation de nb_generation_desc indispensable pour l'appel de recup_descendance
-if (!isset($_REQUEST['nb_gen_desc'])) {$_REQUEST['nb_gen_desc'] = 5;}
+// alimentation de nb_generation_desc indispensable pour l'appel de recup_descendance
+if (!in_array($_REQUEST['pag'], array(1,2,3,4,5,6))) {$_REQUEST['pag'] = 6;}
 
-$nb_generations_desc = $_REQUEST['nb_gen_desc'];
-$descendants = array();
+$nb_generations_desc = $_REQUEST['pag'];
 $descendants ['id_indi'] [0] = $_REQUEST['id'];
-$cpt_generations = 0;
 recup_descendance (0,0,0,'ME_G','MARR');
-array_multisort (
-$descendants['indice']
-,$descendants['id_indi']
-,$descendants['niveau']
-,$descendants['nom']
-,$descendants['prenom1']
-,$descendants['prenom2']
-,$descendants['prenom3']
-,$descendants['sexe']
-,$descendants['profession']
-,$descendants['date_naiss']
-,$descendants['lieu_naiss']
-,$descendants['dept_naiss']
-,$descendants['date_deces']
-,$descendants['lieu_deces']
-,$descendants['dept_deces']
-,$descendants['id_parent']
-,$descendants['sosa_dyn']
-,$descendants['id_conj']   
-,$descendants['date_maria']
-,$descendants['lieu_maria']
-,$descendants['dept_maria']
-,$descendants['nom_conj']  
-,$descendants['pre1_conj'] 
-,$descendants['pre2_conj'] 
-,$descendants['pre3_conj'] 
-,$descendants['sexe_conj'] 
-,$descendants['sosa_conj'] 
-);	
-$cles = array_keys($descendants);
-//afficher_descendance();
+$query = 'DROP TABLE IF EXISTS '.$sql_pref.'_'.$ADDRC.'_desc_cles';
+sql_exec($query);
+// afficher_descendance();//return; //debogue
+array_multisort ($descendants['indice'],$descendants['id_indi'],$descendants['generation'],$descendants['nom'],$descendants['prenom2'],$descendants['sexe'],$descendants['profession'],$descendants['date_naiss'],$descendants['lieu_naiss'],$descendants['date_deces'],$descendants['lieu_deces'],$descendants['id_parent'],$descendants['sosa_d'],$descendants['id_conj']   ,$descendants['date_maria'],$descendants['lieu_maria'],$descendants['nom_conj']  ,$descendants['pre2_conj']  ,$descendants['sexe_conj'] ,$descendants['sosa_conj']);
+// usort($descendants, function($a, $b) {return strcmp($a['indice'], $b['indice']); });
 
-$nb_descendants = count ($descendants['id_indi']);
-			// prÈparation des traits verticaux intermÈdiaire
-
-			// pour 1 caractËre de l'indice, trouver le dernier 2 caractËres dÈpendants  A -> AF
-$iniv=1;
-$niv_old = "";
-for ($ii = 0; $ii < $nb_descendants; $ii++)
-{	if (mb_strlen($descendants['indice'][$ii]) == 1 and $descendants['indice'][$ii] != $niv_old)
-	{	$niv1["pere"][$iniv] = mb_substr($descendants['indice'][$ii],0,1); // on stocke le pËre sans le dernier fils
-	}
-	if (mb_strlen($descendants['indice'][$ii]) == 2) {$nivplus1_old = $descendants['indice'][$ii];}
+// d√©tection fleche suivante
+$old_ii = 0;
+for ($ii=0; $ii < count ($descendants['id_indi']); $ii++)
+{  if ($descendants["generation"][$ii] == $_REQUEST["pag"])
+   {  $descendants['fleche'][$old_ii] = "O";
+   } else 
+   {  $descendants['fleche'][$old_ii] = "N";
+   }
+   $old_ii = $ii;
 }
-//if (mb_substr($niv_old,0,1) == $niv2["pere"][$iniv]) {$niv1["fils"][$iniv] = $nivplus1_old;$nivplus1_old="";} // on stocke le dernier fils
-if (mb_substr($niv_old,0,1) == $niv2["pere"][$iniv]) {$niv1["fils"][$iniv] = $nivplus1_old;$nivplus1_old="";} // on stocke le dernier fils correction niv2 en niv1
-//print_r($niv1);
+$descendants['fleche'][$old_ii] = "N";
 
-
-
-			// preparation generation des intervalles de traits verticaux pour dessiner l'arbre (algo HYPER COMPLEXE)
-
-for ($igen = 1; $igen < $_REQUEST["nb_gen_desc"]; $igen++)
-{	$iniv=1;	// 2eme indice du tableau : l'occurence de l'intervalle concernÈ par la gÈnÈration
-	for ($ii = 0; $ii < $nb_descendants; $ii++)
-	{	if (mb_strlen($descendants['indice'][$ii]) == $igen and $descendants['indice'][$ii] != $niv_old)
-		{	$nivgen["pere"][$igen][$iniv] = mb_substr($descendants['indice'][$ii],0,$igen); // on stocke le pËre sans le dernier fils
-			$inivmoins1 = $iniv - 1;
-			if (mb_substr($niv_old,0,$igen) == $nivgen["pere"][$igen][$inivmoins1]) {$nivgen["fils"][$igen][$inivmoins1] = $nivplus1_old;$nivplus1_old="";} // on stocke le dernier fils
-	
-			$niv_old = $descendants['indice'][$ii];
-			$iniv++;
-		}
-		if (mb_strlen($descendants['indice'][$ii]) == $igen + 1) {$nivplus1_old = $descendants['indice'][$ii];}
-	}
-	$iniv--;
-	if (mb_substr($niv_old,0,$igen) == $nivgen["pere"][$igen][$iniv]) {$nivgen["fils"][$igen][$iniv] = $nivplus1_old;$nivplus1_old="";} // on stocke le dernier fils
-}
-
-/************************************* AFFICHAGE ENTETE ****************************************/
-
-echo '<table><tr><td width=925px>';   // 1ere colonne sur 3
-
-$url = url_request();
-
-echo '<table><tr>';
-echo "<td><a HREF = arbre_descendant_pdf.php".$url."&ipag=AD&itype title='".$got_lang['IBPdf']."' target=_blank><img border=0 width=35 heigth=35 src=themes/icon-print.png></a></td>";
-if ($flag_excel !== "No")
-{	echo "<td><a HREF = arbre_descendant_pdf.php".$url."&ipag=AD&itype=excel title='".$got_lang['IBExc']."'><img border=0 width=35 heigth=35 src=themes/icon-excel.png></a></td>";
-}
-echo "<td class=titre width=100%>".$got_lang['ArDes']." ".$descendants['prenom1'][0]." ".$descendants['nom'][0]."</td>";
-echo '</tr></table>';
-
-echo "<table><tr>";
-echo "<td><a href = fiche_pdf.php".$url."&ipag=AD title='".$got_lang['IBFic']."' target=_blank><img width=35 heigth=35 border=0 src=themes/icon-folder-grey.png></a></td>";
-
-if (geo_pertinente($descendants['dept_naiss']))
-{	echo '<td><a href = affichage_carte.php'.$url.'&ipag=AD&carte= title="'.$got_lang["IBGeo"].'"><img width=35 heigth=35 border=0 src=themes/icon-maps-green.png></a></td>';
-	echo '<td><a href = affichage_carte.php'.$url.'&ipag=AD&carte=&ifin=ge title="'.$got_lang["IBGeo"].'"><img width=35 heigth=35 border=0 src=themes/icon-maps-kml.png></a></td>';
-} 
-
-$nb_gen_desc = array (1,2,3,4,5,6);
-echo '<form method=post><td><b>';
-echo str_repeat ("&nbsp;",20);
-echo $got_lang['NbGen'].' : </b>';
-afficher_radio_bouton("nb_gen_desc",$nb_gen_desc,$nb_gen_desc,$_REQUEST['nb_gen_desc'],"YES");
-echo '</form>';
-echo "</td></tr></table>";
-
-/************************************* AFFICHAGE ARBRE ****************************************/
-
-echo '<table>';
-
-for ($ii = 0; $ii < $nb_descendants; $ii++)
-{	if ($descendants['niveau'][$ii] > $nb_col )
-	{	$nb_col = $descendants['niveau'][$ii];
-	}
-}
-$nb_col++;
-$tota_desce = 0;
-$xx = 50;
-$yy = 160;
-$niv_old = 0;
-$decal = 110;   //decalage des cellules en pixel
- 
-for ($ii = 0; $ii < $nb_descendants; $ii++)
-{	
-	if ($descendants['niveau'][$ii] !== $niv_old)
-	{	if ($descendants['niveau'][$ii] > $niv_old)
-		{	$xx = $xx + $decal;
-		} else
-		{	$xx = $xx - $decal * ($niv_old - $descendants['niveau'][$ii] );
-		}
-	}
-	$yy = $yy + 31;
-	$xbulle = $xx + 220;   // ce parametre doit Ítre identique a la largeur prÈvue dans la fonction afficher_cellule
-
-	$idbulle = 'A'.$descendants['id_indi'][$ii];
-	for ($ik = 0; $ik < count ($cles); $ik++)  {	$tab_indiv[$cles[$ik]] = $descendants[$cles[$ik]][$ii];	}
-	afficher_cellule ($tab_indiv, $idbulle, $xx, $yy, "H2");
-
-				// dessin des traits horizontaux sortants gauche (facile)
-	if ($ii != 0)
-	{	$coor_trait[0] = $xx - $decal/2; 
-		$coor_trait[1] = $yy + 15;
-		$coor_trait[2] = $decal/2;
-		afficher_trait_horizontal($coor_trait);
-	}
-
-				// dessin des traits verticaux derniËre gÈnÈration (assez facile)
-	if (mb_strlen($descendants['indice'][$ii]) == $_REQUEST["nb_gen_desc"] + 1 )
-	{	$coor_trait[0] = $xx - $decal/2;
-		$coor_trait[1] = $yy - 15;
-		$coor_trait[2] = 30;
-		afficher_trait_vertical($coor_trait);
-	}
-				// dessin des traits verticaux derniËre gÈnÈration (TRES difficile)
-	for ($igen = 1; $igen < $_REQUEST["nb_gen_desc"]; $igen++)
-	{	for ($iniv = 0; $iniv <= count($nivgen["pere"][$igen]); $iniv++)
-		{	if ($descendants['indice'][$ii] > $nivgen["pere"][$igen][$iniv] and $descendants['indice'][$ii] <= $nivgen["fils"][$igen][$iniv])
-			{	$coor_trait[0] = -5 + ($decal * $igen);
-				$coor_trait[1] = $yy - 15;
-				$coor_trait[2] = 31;
-				afficher_trait_vertical($coor_trait);//echo '<br>'.$descendants['indice'][$ii].'/'.$xx.'/'.$yy;
-			}
-		}
-	}
-
-			// affichage des conjoints
-//	if (isset($descendants['id_conj'][$ii]))
-//	{
-//		echo ', '.$got_lang['Marie'];
-//		if ($got_lang['Langu'] == 'fr' and $descendants['sexe'][$ii] == 'F') {echo 'e';}
-//		if ($descendants['date_maria'][$ii] != "")
-//		{	echo " <b> ".affichage_date($descendants['date_maria'][$ii]);
-//			echo "</b>";
-//		}
-//		if ($descendants['lieu_maria'][$ii] != "")
-//		{	echo ' '.$got_lang['Situa'].' '.$descendants['lieu_maria'][$ii]." ";
-//			if ($descendants['dept_maria'][$ii] != "")
-//			{	echo '('.$descendants['dept_maria'][$ii].')';
-//			}
-//		}
-//		if ($descendants['nom_conj'][$ii] != '' or $descendants['pre1_conj'][$ii] != '')
-//		{	echo $got_lang['Avec'];
-//			afficher_lien_indiv ($descendants['id_conj'][$ii], $url, $descendants['sosa_conj'][$ii], $descendants['nom_conj'][$ii],$descendants['pre1_conj'][$ii],$descendants['pre2_conj'][$ii],$descendants['pre3_conj'][$ii],$descendants['sexe_conj'][$ii]);
-//		}
-//		$tota_desce++;
-//	}
-	
-//	afficher_bulle ($idbulle, $descendants['id_indi'][$ii], 220, -15);
-//	echo "</div>";  // fermeture de la ligne en boucle
-	
-	
-	$niv_old = $descendants['niveau'][$ii];
-}
-$ii--;
-$total = $ii + $tota_desce;
-
-//echo "<tr><td>&nbsp;</td></tr>";   // une ligne blanche pour separer l'affichage des totaux
-//
-//if ($ii % 2 == 0) 
-//{	echo '<tr class="ligne_tr1">';
-//} else 
-//{	echo '<tr class="ligne_tr2">';
-//}
-//echo '<td></td><td colspan='.$nb_col.'>'.$ii.' '.$got_tag['DESC'].' directs</td>';
-//echo '</tr>';
-
-//echo '<td></td><td colspan='.$nb_col.'>'.$total.' '.$got_tag['DESC'].' '.$got_lang['Avec'].' '.$got_lang['NomCo'].'</td>';
-echo '</tr>';  // fin affichage principal
-
-echo '</table>';  // fin affichage principal
-
-echo '</td><td width=1px></td>';  //2eme colonne vide
-echo'<td width=355px>';   //3eme colonne fiche
-require_once ("fiche.php");
-echo '</td></tr></table>'; // on ferme tout correctement
-
-$query = 'DROP TABLE got_'.$ADDRC.'_desc_cles';
-sql_exec($query,2);
 ?>
-</BODY>
-</HTML>
+<script>
+flag_excel = "<?php echo $flag_excel?>";
+DivIcons ("DivIcon1", "themes/icon-print.png", "arbre_descendant_pdf.php" + "?" + HrefBase + "&id=<?php echo $_REQUEST['id']?>&pag=<?php echo $_REQUEST["pag"]?>&pori=AD&type=");
+if (flag_excel !== "No")
+{   DivIcons ("DivIcon2", "themes/icon-excel.png", "arbre_descendant_pdf.php" + "?" + HrefBase + "&id=<?php echo $_REQUEST["id"]?>&pag=<?php echo $_REQUEST["pag"]?>&pori=AD&type=excel");
+}
+DivIcons ("DivIcon3", "themes/icon-folder-grey.png", "fiche_pdf.php" + "?" + HrefBase + "&id=<?php echo $_REQUEST["id"]?>&pag=<?php echo $_REQUEST["pag"]?>&pori=AD");
+dataJson = `[{"Code":"1", "Nb":0},{"Code":"2", "Nb":0},{"Code":"3", "Nb":0},{"Code":"4", "Nb":0},{"Code":"5", "Nb":0},{"Code":"6", "Nb":0}]`;
+SubMenuJson(dataJson);
+
+display_stat_descendance (<?php echo $_REQUEST['id'];?>);
+</script>
+<?php
+
+// arbre
+echo '
+<table style="border-collapse:separate;">
+';
+
+for ($ii=0; $ii < count ($descendants['id_indi']); $ii++)
+{ if ($descendants["generation"][$ii] != $_REQUEST["pag"])
+  { $colspandeb = $descendants["generation"][$ii] + 1;
+    if ($descendants["generation"][$ii] == 0) {$cell_indiv = "cell_indivP";} else {$cell_indiv = "cell_indiv";}
+    
+    //spaces before cell
+	echo '<tr><td colspan='.$colspandeb.' align=right></td>';
+
+    // lines before cell
+    if ($ii != 0) 
+	{ echo '
+      <td align=right><img heigth=100% src=themes/branche-coude.png></td>';
+	} else 
+	{ echo '
+      <td align=right></td>';
+	}
+    if ($ii == 0) { $central = "O";}
+
+    // cell
+    echo '
+    <td colspan=2 class='.$cell_indiv.' OnMouseOver=afficher_bulle("D'.$ii.'") OnMouseOut=desafficher_bulle("D'.$ii.'")>';
+    afficher_cellule ('D'.$ii, $descendants["id_indi"][$ii], $descendants["sosa_d"][$ii], $descendants["nom"][$ii], $descendants["sexe"][$ii], $descendants["profession"][$ii], $descendants["date_naiss"][$ii], $descendants["lieu_naiss"][$ii], $descendants["date_deces"][$ii], $descendants["lieu_deces"][$ii],$central);
+    $colspanfin = 7 - $descendants["generation"][$ii];
+    echo '</td>';
+
+    // narrow after cell
+    if ($descendants["fleche"][$ii] == "O") 
+    {    echo '
+        <td colspan='.$colspanfin.'><a href=arbre_descendant.php'.$url.'&id='.$descendants["id_indi"][$ii].'><img src=themes/fleche_droite.png></a></td>';
+    }
+    echo '
+    </tr>';
+  }
+}
+echo '
+</table>';
 
 
+/*
+            // affichage des conjoints
+//    if (isset($descendants['id_conj'][$ii]))
+//    {
+//        echo ', '.$got_lang['Marie'];
+//        if ($got_lang['Langu'] == 'fr' and $descendants['sexe'][$ii] == 'F') {echo 'e';}
+//        if ($descendants['date_maria'][$ii] != "")
+//        {    echo " <b> ".displayDate($descendants['date_maria'][$ii]);
+//            echo "</b>";
+//        }
+//        if ($descendants['lieu_maria'][$ii] != "")
+//        {    echo ' '.$got_lang['Situa'].' '.$descendants['lieu_maria'][$ii]." ";
+//            if ($descendants['dept_maria'][$ii] != "")
+//            {    echo '('.$descendants['dept_maria'][$ii].')';
+//            }
+//        }
+//        if ($descendants['nom_conj'][$ii] != '' or $descendants['pre1_conj'][$ii] != '')
+//        {    echo $got_lang['Avec'];
+//            afficher_lien_indiv ($descendants['id_conj'][$ii], $descendants['sosa_conj'][$ii], $descendants['nom_conj'][$ii],$descendants['pre1_conj'][$ii],$descendants['pre2_conj'][$ii],$descendants['pre3_conj'][$ii],$descendants['sexe_conj'][$ii]);
+//        }
+//        $tota_desce++;
+//    }
+    
+// une ligne blanche pour separer l'affichage des totaux
+//if ($ii % 2 == 0) 
+//
+*/
+
+// on ferme le masque g√©n√©ral
+include ("_inc_html_card.php");
